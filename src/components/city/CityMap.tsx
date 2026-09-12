@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -20,10 +19,45 @@ import PathNetwork from "./PathNetwork";
 import PlayerMarker from "./PlayerMarker";
 import TowerMarker from "./TowerMarker";
 import MapHUD from "./MapHUD";
+import WorldSeam from "./WorldSeam";
 
-/** Base map plate size in CSS px (scaled by zoom). */
-const MAP_WIDTH = 2400;
-const MAP_HEIGHT = 1600;
+/** One city tile size */
+const TILE_W = 2400;
+const TILE_H = 1600;
+/** 3×3 world so edges always continue */
+const WORLD_W = TILE_W * 3;
+const WORLD_H = TILE_H * 3;
+/** Playable city sits in the center tile */
+const ORIGIN_X = TILE_W;
+const ORIGIN_Y = TILE_H;
+
+function clampPan(
+  panX: number,
+  panY: number,
+  zoom: number,
+  viewW: number,
+  viewH: number,
+) {
+  const scaledW = WORLD_W * zoom;
+  const scaledH = WORLD_H * zoom;
+
+  let nextX = panX;
+  let nextY = panY;
+
+  if (scaledW <= viewW) {
+    nextX = (viewW - scaledW) / 2;
+  } else {
+    nextX = Math.min(0, Math.max(viewW - scaledW, panX));
+  }
+
+  if (scaledH <= viewH) {
+    nextY = (viewH - scaledH) / 2;
+  } else {
+    nextY = Math.min(0, Math.max(viewH - scaledH, panY));
+  }
+
+  return { x: nextX, y: nextY };
+}
 
 export default function CityMap() {
   const reduceMotion = useReducedMotion();
@@ -49,8 +83,21 @@ export default function CityMap() {
   const selectTower = useCityMapStore((s) => s.selectTower);
   const setZoom = useCityMapStore((s) => s.setZoom);
   const setPan = useCityMapStore((s) => s.setPan);
-  const panBy = useCityMapStore((s) => s.panBy);
   const finishTravelStep = useCityMapStore((s) => s.finishTravelStep);
+
+  const applyPan = useCallback(
+    (x: number, y: number, nextZoom = zoom) => {
+      const viewport = viewportRef.current;
+      if (!viewport) {
+        setPan(x, y);
+        return;
+      }
+      const { width, height } = viewport.getBoundingClientRect();
+      const clamped = clampPan(x, y, nextZoom, width, height);
+      setPan(clamped.x, clamped.y);
+    },
+    [setPan, zoom],
+  );
 
   const centerOnTower = useCallback(
     (id: TowerId, nextZoom = useCityMapStore.getState().zoom) => {
@@ -58,32 +105,36 @@ export default function CityMap() {
       if (!viewport) return;
       const tower = TOWER_MAP[id];
       const { width, height } = viewport.getBoundingClientRect();
-      const worldX = (tower.x / 100) * MAP_WIDTH * nextZoom;
-      const worldY = (tower.y / 100) * MAP_HEIGHT * nextZoom;
-      setPan(width / 2 - worldX, height / 2 - worldY);
+      const worldX = (ORIGIN_X + (tower.x / 100) * TILE_W) * nextZoom;
+      const worldY = (ORIGIN_Y + (tower.y / 100) * TILE_H) * nextZoom;
+      applyPan(width / 2 - worldX, height / 2 - worldY, nextZoom);
     },
-    [setPan],
+    [applyPan],
   );
 
-  // Keep player in view while traveling (skip when an explicit focus just fired)
   useEffect(() => {
     centerOnTower(currentTowerId);
   }, [currentTowerId, centerOnTower]);
 
-  // Explicit focus / reset camera
   useEffect(() => {
     if (!focusTargetId || focusNonce === 0) return;
     const id = requestAnimationFrame(() => centerOnTower(focusTargetId));
     return () => cancelAnimationFrame(id);
   }, [focusNonce, focusTargetId, centerOnTower]);
 
-  // Step through multi-hop travel
   useEffect(() => {
     if (!isTraveling || travelPath.length === 0) return;
     const delay = reduceMotion ? 120 : 700;
     const timer = window.setTimeout(() => finishTravelStep(), delay);
     return () => window.clearTimeout(timer);
   }, [isTraveling, travelPath, finishTravelStep, reduceMotion]);
+
+  // Re-clamp on resize
+  useEffect(() => {
+    const onResize = () => applyPan(panX, panY, zoom);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [applyPan, panX, panY, zoom]);
 
   const onWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -98,11 +149,10 @@ export default function CityMap() {
     const nextZoom = Math.min(2.6, Math.max(0.55, zoom + delta));
     if (nextZoom === zoom) return;
 
-    // Zoom toward cursor
     const worldX = (cursorX - panX) / zoom;
     const worldY = (cursorY - panY) / zoom;
     setZoom(nextZoom);
-    setPan(cursorX - worldX * nextZoom, cursorY - worldY * nextZoom);
+    applyPan(cursorX - worldX * nextZoom, cursorY - worldY * nextZoom, nextZoom);
   };
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -125,7 +175,7 @@ export default function CityMap() {
     if (Math.abs(dx) > 2 || Math.abs(dy) > 2) drag.moved = true;
     drag.lastX = event.clientX;
     drag.lastY = event.clientY;
-    panBy(dx, dy);
+    applyPan(panX + dx, panY + dy);
   };
 
   const endDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -141,13 +191,8 @@ export default function CityMap() {
     }
   };
 
-  const onBackgroundClick = () => {
-    if (dragRef.current.moved) return;
-    selectTower(currentTowerId);
-  };
-
   return (
-    <div className="relative h-dvh min-h-[640px] w-full overflow-hidden bg-void">
+    <div className="relative h-dvh min-h-[640px] w-full overflow-hidden bg-[#0a1624]">
       <div
         ref={viewportRef}
         className="absolute inset-0 touch-none cursor-grab active:cursor-grabbing"
@@ -156,36 +201,40 @@ export default function CityMap() {
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        onClick={onBackgroundClick}
+        onClick={() => {
+          if (dragRef.current.moved) return;
+          selectTower(currentTowerId);
+        }}
         role="application"
         aria-label="Aurelia city map. Scroll to zoom, drag to pan, select towers to travel."
       >
         <div
           className="absolute left-0 top-0 origin-top-left will-change-transform"
           style={{
-            width: MAP_WIDTH,
-            height: MAP_HEIGHT,
+            width: WORLD_W,
+            height: WORLD_H,
             transform: `translate(${panX}px, ${panY}px) scale(${zoom})`,
             transition: reduceMotion ? undefined : "transform 80ms linear",
           }}
         >
-          <div className="relative h-full w-full overflow-hidden rounded-[2px]">
-            <Image
-              src="/aurelia/home-city.png"
-              alt=""
-              fill
-              priority
-              sizes="2400px"
-              className="object-cover object-center select-none"
-              draggable={false}
-            />
+          {/* Continuous world — no blue gaps */}
+          <WorldSeam />
 
-            {/* Soft game tint so markers read clearly */}
+          {/* Playable center city layer */}
+          <div
+            className="absolute"
+            style={{
+              left: ORIGIN_X,
+              top: ORIGIN_Y,
+              width: TILE_W,
+              height: TILE_H,
+            }}
+          >
             <div
               className="pointer-events-none absolute inset-0"
               style={{
                 background:
-                  "radial-gradient(ellipse at center, transparent 55%, rgba(7,17,31,0.22) 100%)",
+                  "radial-gradient(ellipse at center, transparent 50%, rgba(7,17,31,0.18) 100%)",
               }}
             />
 

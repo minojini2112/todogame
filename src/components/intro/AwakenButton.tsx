@@ -23,7 +23,7 @@ type AwakenButtonProps = {
   href?: string;
 };
 
-export function AwakenButton({ href = "/city" }: AwakenButtonProps) {
+export function AwakenButton({ href = "/auth" }: AwakenButtonProps) {
   const reduced = useReducedMotion();
   const [hovered, setHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
