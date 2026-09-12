@@ -68,7 +68,7 @@ export function SplashScreen() {
             exit={{ opacity: 0 }}
             transition={{ duration: reduced ? 0.15 : 0.6, delay: reduced ? 0 : 0.15 }}
           >
-            <AwakenButton href="/city" />
+            <AwakenButton href="/intro" />
           </motion.div>
         ) : null}
       </AnimatePresence>

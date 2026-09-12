@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { useState, type MouseEvent, type PointerEvent } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
+import { startPrologueMusic } from "@/lib/prologue/audio";
 
 const ORBITS = [
   { delay: 0, radius: 78, size: 6, duration: 7 },
@@ -23,7 +24,7 @@ type AwakenButtonProps = {
   href?: string;
 };
 
-export function AwakenButton({ href = "/city" }: AwakenButtonProps) {
+export function AwakenButton({ href = "/intro" }: AwakenButtonProps) {
   const reduced = useReducedMotion();
   const [hovered, setHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -42,6 +43,8 @@ export function AwakenButton({ href = "/city" }: AwakenButtonProps) {
   }
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+    startPrologueMusic();
+
     if (reduced) {
       return;
     }
