@@ -61,20 +61,6 @@ export default function TowerMarker({
           <Zap className="relative h-4 w-4 text-[#55e6ff]" />
         )}
       </span>
-
-      <span
-        className={cn(
-          "pointer-events-none rounded-md border border-[#55e6ff]/35 bg-void/85 px-2 py-1 text-center backdrop-blur-md",
-          "shadow-[0_0_16px_rgba(85,230,255,0.35)]",
-          "opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100",
-          (isSelected || isCurrent) && "opacity-100",
-        )}
-      >
-        <span className="block font-display text-[9px] tracking-[0.18em] text-[#9af3ff] uppercase">
-          {tower.name}
-        </span>
-        <span className="block text-[10px] text-[#ffc857]">Lv {tower.level}</span>
-      </span>
     </button>
   );
 }
