@@ -1,4 +1,6 @@
 import { SignUp } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { clerkAppearance } from "@/lib/clerk-appearance";
 
@@ -7,7 +9,14 @@ export const metadata = {
   description: "Create your EchoBound architect account.",
 };
 
-export default function SignUpPage() {
+const AFTER_AUTH = "/city";
+
+export default async function SignUpPage() {
+  const { userId } = await auth();
+  if (userId) {
+    redirect(AFTER_AUTH);
+  }
+
   return (
     <AuthShell
       title="Bind Your Echo"
@@ -18,8 +27,8 @@ export default function SignUpPage() {
         routing="path"
         path="/auth/sign-up"
         signInUrl="/auth"
-        forceRedirectUrl="/city"
-        fallbackRedirectUrl="/city"
+        forceRedirectUrl={AFTER_AUTH}
+        fallbackRedirectUrl={AFTER_AUTH}
       />
     </AuthShell>
   );

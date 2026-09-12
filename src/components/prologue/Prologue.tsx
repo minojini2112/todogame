@@ -74,7 +74,7 @@ export default function Prologue() {
 
   function finish() {
     stopPrologueMusic();
-    router.push("/city");
+    router.push("/auth");
   }
 
   function goNextScene() {

@@ -13,6 +13,7 @@ import {
 import { TOWER_MAP, areConnected } from "@/lib/city/towers";
 import { useCityMapStore } from "@/store/cityMapStore";
 import { cn } from "@/lib/utils";
+import { EchoBondMenu } from "@/components/city/EchoBondMenu";
 
 export default function MapHUD() {
   const currentTowerId = useCityMapStore((s) => s.currentTowerId);
@@ -175,6 +176,8 @@ export default function MapHUD() {
           ? `Traveling toward ${selected?.name ?? "tower"}`
           : `Located at ${current.name}`}
       </div>
+
+      <EchoBondMenu />
     </>
   );
 }

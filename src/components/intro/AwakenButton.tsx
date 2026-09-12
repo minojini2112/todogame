@@ -22,9 +22,15 @@ type Burst = {
 
 type AwakenButtonProps = {
   href?: string;
+  label?: string;
+  playMusic?: boolean;
 };
 
-export function AwakenButton({ href = "/intro" }: AwakenButtonProps) {
+export function AwakenButton({
+  href = "/intro",
+  label = "Start Journey",
+  playMusic = true,
+}: AwakenButtonProps) {
   const reduced = useReducedMotion();
   const [hovered, setHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -43,7 +49,9 @@ export function AwakenButton({ href = "/intro" }: AwakenButtonProps) {
   }
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
-    startPrologueMusic();
+    if (playMusic) {
+      startPrologueMusic();
+    }
 
     if (reduced) {
       return;
@@ -157,7 +165,7 @@ export function AwakenButton({ href = "/intro" }: AwakenButtonProps) {
             ✦
           </motion.span>
 
-          <span className="relative">Start Journey</span>
+          <span className="relative">{label}</span>
 
           <motion.span
             aria-hidden="true"

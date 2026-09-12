@@ -35,23 +35,38 @@ export const metadata: Metadata = {
     "A gamified life RPG. Wake in ruined Aurelia, bind with Skyform, and restore the last city through real-world quests.",
 };
 
+const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const afterAuthUrl = "/city";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={clerkAppearance}>
-      <html
-        lang="en"
-        className={`${oxanium.variable} ${manrope.variable} ${cinzel.variable} h-full antialiased`}
+    <html
+      lang="en"
+      className={`${oxanium.variable} ${manrope.variable} ${cinzel.variable} h-full antialiased`}
+    >
+      <body
+        className={`${manrope.className} flex min-h-full flex-col font-sans antialiased`}
       >
-        <body
-          className={`${manrope.className} flex min-h-full flex-col font-sans antialiased`}
-        >
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        {publishableKey ? (
+          <ClerkProvider
+            appearance={clerkAppearance}
+            publishableKey={publishableKey}
+            signInForceRedirectUrl={afterAuthUrl}
+            signUpForceRedirectUrl={afterAuthUrl}
+            signInFallbackRedirectUrl={afterAuthUrl}
+            signUpFallbackRedirectUrl={afterAuthUrl}
+            afterSignOutUrl="/"
+          >
+            {children}
+          </ClerkProvider>
+        ) : (
+          children
+        )}
+      </body>
+    </html>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -10,9 +11,12 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export function SplashScreen() {
   const reduced = useReducedMotion();
+  const { isSignedIn, isLoaded } = useAuth();
   const [imageReady, setImageReady] = useState(false);
   const [progress, setProgress] = useState(8);
   const [booting, setBooting] = useState(true);
+
+  const journeyHref = isSignedIn ? "/city" : "/intro";
 
   useEffect(() => {
     const started = performance.now();
@@ -68,7 +72,11 @@ export function SplashScreen() {
             exit={{ opacity: 0 }}
             transition={{ duration: reduced ? 0.15 : 0.6, delay: reduced ? 0 : 0.15 }}
           >
-            <AwakenButton href="/intro" />
+            <AwakenButton
+              href={isLoaded ? journeyHref : "/intro"}
+              label={isSignedIn ? "Enter Aurelia" : "Start Journey"}
+              playMusic={!isSignedIn}
+            />
           </motion.div>
         ) : null}
       </AnimatePresence>
