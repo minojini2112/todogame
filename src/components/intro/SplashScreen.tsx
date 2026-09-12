@@ -8,10 +8,28 @@ import splashArt from "@/assests/splash_screen.jpeg";
 import { AwakenButton } from "@/components/intro/AwakenButton";
 import { BootLoader } from "@/components/intro/BootLoader";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { isClerkConfigured } from "@/lib/clerk";
 
 export function SplashScreen() {
-  const reduced = useReducedMotion();
+  if (!isClerkConfigured) {
+    return <SplashScreenView isSignedIn={false} isLoaded />;
+  }
+  return <SplashScreenWithClerk />;
+}
+
+function SplashScreenWithClerk() {
   const { isSignedIn, isLoaded } = useAuth();
+  return <SplashScreenView isSignedIn={Boolean(isSignedIn)} isLoaded={isLoaded} />;
+}
+
+function SplashScreenView({
+  isSignedIn,
+  isLoaded,
+}: {
+  isSignedIn: boolean;
+  isLoaded: boolean;
+}) {
+  const reduced = useReducedMotion();
   const [imageReady, setImageReady] = useState(false);
   const [progress, setProgress] = useState(8);
   const [booting, setBooting] = useState(true);

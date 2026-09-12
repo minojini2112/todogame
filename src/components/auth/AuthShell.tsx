@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 type AuthShellProps = {
   title: string;
@@ -26,10 +27,10 @@ export function AuthShell({ title, subtitle, children }: AuthShellProps) {
       <div className="relative z-10 w-full max-w-[680px]">
         <section className="rounded-[28px] border border-white/10 bg-[rgba(13,28,45,0.94)] px-10 py-8 shadow-[0_24px_80px_rgba(7,17,31,0.6)] backdrop-blur-xl sm:px-12 sm:py-9">
           <header className="mb-7 text-center">
-            <p className="font-display text-[11px] tracking-[0.32em] text-heartlight uppercase">
-              EchoBound
-            </p>
-            <h1 className="mt-2 font-display text-[1.65rem] leading-none tracking-[0.03em] text-ink">
+            <div className="flex justify-center">
+              <BrandLogo href="/" size="md" tone="ink" priority />
+            </div>
+            <h1 className="mt-4 font-display text-[1.65rem] leading-none tracking-[0.03em] text-ink">
               {title}
             </h1>
             <p className="mt-2 text-[15px] leading-6 text-muted">{subtitle}</p>

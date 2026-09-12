@@ -3,9 +3,21 @@
 import { useClerk } from "@clerk/nextjs";
 import { useState } from "react";
 import { SeverBondConfirm } from "@/components/SeverBondConfirm";
+import { isClerkConfigured } from "@/lib/clerk";
 import { cn } from "@/lib/utils";
 
 export function SignOutButton({
+  tone = "sanctum",
+  className,
+}: {
+  tone?: "city" | "sanctum";
+  className?: string;
+}) {
+  if (!isClerkConfigured) return null;
+  return <SignOutButtonInner tone={tone} className={className} />;
+}
+
+function SignOutButtonInner({
   tone = "sanctum",
   className,
 }: {
