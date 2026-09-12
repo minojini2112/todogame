@@ -37,15 +37,15 @@ type CityMapState = {
 
 export const useCityMapStore = create<CityMapState>((set, get) => ({
   currentTowerId: "dawn_hall",
-  selectedTowerId: "dawn_hall",
-  zoom: 1.35,
+  selectedTowerId: null,
+  zoom: 0.84,
   panX: 0,
   panY: 0,
   isTraveling: false,
   travelPath: [],
-  unlockedTowerIds: ["dawn_hall", "river_bridge"],
+  unlockedTowerIds: ["dawn_hall", "river_bridge", "colonnade", "heartlight_ring"],
   focusNonce: 0,
-  focusTargetId: "dawn_hall",
+  focusTargetId: null,
 
   selectTower: (id) => set({ selectedTowerId: id }),
 
@@ -106,20 +106,14 @@ export const useCityMapStore = create<CityMapState>((set, get) => ({
   focusTower: (id) => {
     set({
       selectedTowerId: id,
-      focusTargetId: id,
-      focusNonce: get().focusNonce + 1,
-      zoom: Math.max(get().zoom, 1.35),
     });
   },
 
   resetCamera: () =>
     set({
-      zoom: 1.15,
-      panX: 0,
-      panY: 0,
-      selectedTowerId: get().currentTowerId,
-      focusTargetId: get().currentTowerId,
-      focusNonce: get().focusNonce + 1,
+      zoom: 0.84,
+      selectedTowerId: null,
+      focusTargetId: null,
     }),
 }));
 

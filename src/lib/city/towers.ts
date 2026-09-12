@@ -2,13 +2,13 @@ export type TowerId =
   | "dawn_hall"
   | "river_bridge"
   | "colonnade"
-  | "heartlight_ring"
-  | "apex_spire";
+  | "heartlight_ring";
 
 export type TowerStatus = "restored" | "active" | "damaged" | "locked";
 
 export interface TowerNode {
   id: TowerId;
+  spiritId: "eagle" | "deer" | "wolf" | "phoenix";
   name: string;
   subtitle: string;
   x: number;
@@ -17,67 +17,71 @@ export interface TowerNode {
   level: number;
   connections: TowerId[];
   district: string;
+  image: string;
+  containImage?: boolean;
+  cardSide: "left" | "right";
 }
 
 /**
- * Linear restoration path across the Aurelia plate.
- * 1 hall → 2 bridge → 3 colonnade → 4 heartlight ring → 5 apex (save the city)
+ * The map markers are the four spirits, not numbered city levels.
  */
 export const TOWERS: TowerNode[] = [
   {
     id: "dawn_hall",
-    name: "Dawn Hall",
-    subtitle: "First location",
-    x: 38.2,
-    y: 63.8,
+    spiritId: "eagle",
+    name: "Eagle",
+    subtitle: "Focus",
+    x: 24,
+    y: 72,
     status: "active",
     level: 1,
     connections: ["river_bridge"],
-    district: "Outer Sanctum",
+    district: "Deep, undivided work.",
+    image: "/assests/spirit_eagle.png",
+    containImage: true,
+    cardSide: "left",
   },
   {
     id: "river_bridge",
-    name: "River Bridge",
-    subtitle: "Cross the canal",
-    x: 65.8,
-    y: 61.6,
-    status: "damaged",
+    spiritId: "wolf",
+    name: "Wolf",
+    subtitle: "Swiftness",
+    x: 78,
+    y: 70,
+    status: "active",
     level: 2,
     connections: ["dawn_hall", "colonnade"],
-    district: "Canal Crossing",
+    district: "Finishing before the hour closes.",
+    image: "/assests/spirit_wolf.jpg",
+    cardSide: "right",
   },
   {
     id: "colonnade",
-    name: "Gold Colonnade",
-    subtitle: "The inner court",
-    x: 54.6,
-    y: 52.4,
-    status: "damaged",
+    spiritId: "deer",
+    name: "Deer",
+    subtitle: "Gentleness",
+    x: 24,
+    y: 34,
+    status: "active",
     level: 3,
     connections: ["river_bridge", "heartlight_ring"],
-    district: "Palace Court",
+    district: "Care, rest, and quiet kindness.",
+    image: "/assests/spirit_deer.jpg",
+    cardSide: "left",
   },
   {
     id: "heartlight_ring",
-    name: "Heartlight Ring",
-    subtitle: "Command nexus",
-    x: 50.2,
-    y: 47.2,
-    status: "damaged",
+    spiritId: "phoenix",
+    name: "Phoenix",
+    subtitle: "Rise",
+    x: 78,
+    y: 32,
+    status: "active",
     level: 4,
-    connections: ["colonnade", "apex_spire"],
-    district: "Heartlight Core",
-  },
-  {
-    id: "apex_spire",
-    name: "Apex Spire",
-    subtitle: "Save the city",
-    x: 50.2,
-    y: 27.6,
-    status: "damaged",
-    level: 5,
-    connections: ["heartlight_ring"],
-    district: "The Last Light",
+    connections: ["colonnade"],
+    district: "Trying again until it is done.",
+    image: "/assests/spirit_phoenix.jpg",
+    cardSide: "right",
   },
 ];
 

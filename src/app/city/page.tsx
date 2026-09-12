@@ -1,10 +1,12 @@
 import CityMap from "@/components/city/CityMap";
+import { loadRpgState } from "@/modules/rpg/actions";
 
 export const metadata = {
   title: "Aurelia Map — EchoBound",
-  description: "Travel tower to tower across Aurelia. Zoom, pan, and restore districts.",
+  description: "Wake the four spirits. When all are collected, the city recovers.",
 };
 
-export default function CityPage() {
-  return <CityMap />;
+export default async function CityPage() {
+  const state = await loadRpgState();
+  return <CityMap spirits={state.spirits} />;
 }

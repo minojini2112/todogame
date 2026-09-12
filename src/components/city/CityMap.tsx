@@ -9,15 +9,10 @@ import {
   type WheelEvent as ReactWheelEvent,
 } from "react";
 import { useReducedMotion } from "motion/react";
-import {
-  TOWERS,
-  TOWER_MAP,
-  areConnected,
-  type TowerId,
-} from "@/lib/city/towers";
+import { TOWERS } from "@/lib/city/towers";
+import { SPIRIT_UNLOCK } from "@/modules/rpg/spirits";
+import type { RpgSpiritProgress } from "@/modules/rpg/types";
 import { useCityMapStore } from "@/store/cityMapStore";
-import PathNetwork from "./PathNetwork";
-import PlayerMarker from "./PlayerMarker";
 import TowerMarker from "./TowerMarker";
 import MapHUD from "./MapHUD";
 import CityArrival from "./CityArrival";
@@ -25,6 +20,16 @@ import CityArrival from "./CityArrival";
 /** Single city image — no tiled copies. */
 const MAP_W = 2400;
 const MAP_H = 1600;
+const MAX_ZOOM = 2.6;
+const PREFERRED_ZOOM = 0.84;
+
+function coverZoom(viewW: number, viewH: number) {
+  return Math.max(viewW / MAP_W, viewH / MAP_H);
+}
+
+function clampZoom(zoom: number, viewW: number, viewH: number) {
+  return Math.min(MAX_ZOOM, Math.max(coverZoom(viewW, viewH), zoom));
+}
 
 function clampPan(
   panX: number,
@@ -36,25 +41,22 @@ function clampPan(
   const scaledW = MAP_W * zoom;
   const scaledH = MAP_H * zoom;
 
-  let nextX = panX;
-  let nextY = panY;
+  const minX = Math.min(0, viewW - scaledW);
+  const maxX = Math.max(0, viewW - scaledW);
+  const minY = Math.min(0, viewH - scaledH);
+  const maxY = Math.max(0, viewH - scaledH);
 
-  if (scaledW <= viewW) {
-    nextX = (viewW - scaledW) / 2;
-  } else {
-    nextX = Math.min(0, Math.max(viewW - scaledW, panX));
-  }
-
-  if (scaledH <= viewH) {
-    nextY = (viewH - scaledH) / 2;
-  } else {
-    nextY = Math.min(0, Math.max(viewH - scaledH, panY));
-  }
-
-  return { x: nextX, y: nextY };
+  return {
+    x: Math.min(maxX, Math.max(minX, panX)),
+    y: Math.min(maxY, Math.max(minY, panY)),
+  };
 }
 
-export default function CityMap() {
+function centerPan(zoom: number, viewW: number, viewH: number) {
+  return clampPan((viewW - MAP_W * zoom) / 2, (viewH - MAP_H * zoom) / 2, zoom, viewW, viewH);
+}
+
+export default function CityMap({ spirits }: { spirits: RpgSpiritProgress[] }) {
   const reduceMotion = useReducedMotion();
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -68,17 +70,15 @@ export default function CityMap() {
   const zoom = useCityMapStore((s) => s.zoom);
   const panX = useCityMapStore((s) => s.panX);
   const panY = useCityMapStore((s) => s.panY);
-  const currentTowerId = useCityMapStore((s) => s.currentTowerId);
   const selectedTowerId = useCityMapStore((s) => s.selectedTowerId);
-  const isTraveling = useCityMapStore((s) => s.isTraveling);
-  const travelPath = useCityMapStore((s) => s.travelPath);
-  const unlockedTowerIds = useCityMapStore((s) => s.unlockedTowerIds);
-  const focusNonce = useCityMapStore((s) => s.focusNonce);
-  const focusTargetId = useCityMapStore((s) => s.focusTargetId);
   const selectTower = useCityMapStore((s) => s.selectTower);
   const setZoom = useCityMapStore((s) => s.setZoom);
   const setPan = useCityMapStore((s) => s.setPan);
-  const finishTravelStep = useCityMapStore((s) => s.finishTravelStep);
+  const framed = useRef(false);
+  const recovered = TOWERS.every((tower) => {
+    const points = spirits.find((row) => row.spirit_id === tower.spiritId)?.points ?? 0;
+    return points >= SPIRIT_UNLOCK;
+  });
 
   const applyPan = useCallback(
     (x: number, y: number, nextZoom = zoom) => {
@@ -94,41 +94,53 @@ export default function CityMap() {
     [setPan, zoom],
   );
 
-  const centerOnTower = useCallback(
-    (id: TowerId, nextZoom = useCityMapStore.getState().zoom) => {
+  const zoomToward = useCallback(
+    (delta: number, origin?: { x: number; y: number }) => {
       const viewport = viewportRef.current;
-      if (!viewport) return;
-      const tower = TOWER_MAP[id];
-      const { width, height } = viewport.getBoundingClientRect();
-      const worldX = (tower.x / 100) * MAP_W * nextZoom;
-      const worldY = (tower.y / 100) * MAP_H * nextZoom;
-      applyPan(width / 2 - worldX, height / 2 - worldY, nextZoom);
+      if (!viewport) {
+        setZoom(Math.min(MAX_ZOOM, Math.max(PREFERRED_ZOOM, zoom + delta)));
+        return;
+      }
+
+      const rect = viewport.getBoundingClientRect();
+      const nextZoom = clampZoom(zoom + delta, rect.width, rect.height);
+      if (nextZoom === zoom) return;
+
+      const cursorX = origin?.x ?? rect.width / 2;
+      const cursorY = origin?.y ?? rect.height / 2;
+      const worldX = (cursorX - panX) / zoom;
+      const worldY = (cursorY - panY) / zoom;
+      setZoom(nextZoom);
+      applyPan(cursorX - worldX * nextZoom, cursorY - worldY * nextZoom, nextZoom);
     },
-    [applyPan],
+    [applyPan, panX, panY, setZoom, zoom],
   );
 
   useEffect(() => {
-    centerOnTower(currentTowerId);
-  }, [currentTowerId, centerOnTower]);
+    if (framed.current) return;
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const { width, height } = viewport.getBoundingClientRect();
+    if (width < 8 || height < 8) return;
+    framed.current = true;
+    const nextZoom = clampZoom(PREFERRED_ZOOM, width, height);
+    setZoom(nextZoom);
+    const next = centerPan(nextZoom, width, height);
+    setPan(next.x, next.y);
+  }, [setPan, setZoom]);
 
   useEffect(() => {
-    if (!focusTargetId || focusNonce === 0) return;
-    const id = requestAnimationFrame(() => centerOnTower(focusTargetId));
-    return () => cancelAnimationFrame(id);
-  }, [focusNonce, focusTargetId, centerOnTower]);
-
-  useEffect(() => {
-    if (!isTraveling || travelPath.length === 0) return;
-    const delay = reduceMotion ? 120 : 700;
-    const timer = window.setTimeout(() => finishTravelStep(), delay);
-    return () => window.clearTimeout(timer);
-  }, [isTraveling, travelPath, finishTravelStep, reduceMotion]);
-
-  useEffect(() => {
-    const onResize = () => applyPan(panX, panY, zoom);
+    const onResize = () => {
+      const viewport = viewportRef.current;
+      if (!viewport) return;
+      const { width, height } = viewport.getBoundingClientRect();
+      const nextZoom = clampZoom(zoom, width, height);
+      if (nextZoom !== zoom) setZoom(nextZoom);
+      applyPan(panX, panY, nextZoom);
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [applyPan, panX, panY, zoom]);
+  }, [applyPan, panX, panY, setZoom, zoom]);
 
   const onWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -139,14 +151,7 @@ export default function CityMap() {
     const cursorX = event.clientX - rect.left;
     const cursorY = event.clientY - rect.top;
 
-    const delta = event.deltaY > 0 ? -0.12 : 0.12;
-    const nextZoom = Math.min(2.6, Math.max(0.7, zoom + delta));
-    if (nextZoom === zoom) return;
-
-    const worldX = (cursorX - panX) / zoom;
-    const worldY = (cursorY - panY) / zoom;
-    setZoom(nextZoom);
-    applyPan(cursorX - worldX * nextZoom, cursorY - worldY * nextZoom, nextZoom);
+    zoomToward(event.deltaY > 0 ? -0.12 : 0.12, { x: cursorX, y: cursorY });
   };
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -197,10 +202,10 @@ export default function CityMap() {
         onPointerCancel={endDrag}
         onClick={() => {
           if (dragRef.current.moved) return;
-          selectTower(currentTowerId);
+          selectTower(null);
         }}
         role="application"
-        aria-label="Aurelia city map. Drag to look around. Travel moves to the next location."
+        aria-label="Aurelia map. The four spirits are stones. Wake them all to recover the city."
       >
         <div
           className="absolute left-0 top-0 origin-top-left will-change-transform"
@@ -218,34 +223,22 @@ export default function CityMap() {
               fill
               priority
               sizes="2400px"
-              className="object-cover object-center select-none"
+              className={`object-cover object-center select-none transition duration-700 ${
+                recovered ? "brightness-110 saturate-125" : "brightness-[0.55] saturate-50"
+              }`}
               draggable={false}
             />
 
-            <PathNetwork
-              currentId={currentTowerId}
-              selectedId={selectedTowerId}
-              unlockedIds={unlockedTowerIds}
-            />
-
-            <PlayerMarker towerId={currentTowerId} isTraveling={isTraveling} />
-
             {TOWERS.map((tower) => {
-              const unlocked = unlockedTowerIds.includes(tower.id);
-              const reachable =
-                unlocked &&
-                tower.status !== "locked" &&
-                areConnected(currentTowerId, tower.id) &&
-                tower.id !== currentTowerId;
-
+              const points = spirits.find((row) => row.spirit_id === tower.spiritId)?.points ?? 0;
+              const awake = points >= SPIRIT_UNLOCK;
               return (
                 <TowerMarker
                   key={tower.id}
                   tower={tower}
-                  isCurrent={tower.id === currentTowerId}
+                  points={points}
                   isSelected={tower.id === selectedTowerId}
-                  isReachable={reachable}
-                  unlocked={unlocked}
+                  awake={awake}
                   onSelect={() => selectTower(tower.id)}
                 />
               );
@@ -254,7 +247,24 @@ export default function CityMap() {
         </div>
       </div>
 
-      <MapHUD />
+      <MapHUD
+        spirits={spirits}
+        recovered={recovered}
+        onZoomBy={(delta) => zoomToward(delta)}
+        onReset={() => {
+          const viewport = viewportRef.current;
+          if (!viewport) {
+            setZoom(PREFERRED_ZOOM);
+            setPan(0, 0);
+            return;
+          }
+          const { width, height } = viewport.getBoundingClientRect();
+          const nextZoom = clampZoom(PREFERRED_ZOOM, width, height);
+          setZoom(nextZoom);
+          const next = centerPan(nextZoom, width, height);
+          setPan(next.x, next.y);
+        }}
+      />
       <CityArrival />
     </div>
   );
