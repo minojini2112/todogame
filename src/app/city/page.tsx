@@ -8,5 +8,11 @@ export const metadata = {
 
 export default async function CityPage() {
   const state = await loadRpgState();
-  return <CityMap spirits={state.spirits} />;
+  return (
+    <CityMap
+      spirits={state.spirits}
+      leaderboard={state.leaderboard}
+      youId={state.profile.id}
+    />
+  );
 }

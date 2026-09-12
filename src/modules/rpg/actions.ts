@@ -11,6 +11,7 @@ import type {
   RpgAttributeRow,
   RpgGroup,
   RpgInventoryItem,
+  RpgLeaderRow,
   RpgList,
   RpgPriority,
   RpgProfile,
@@ -411,6 +412,7 @@ export type BoardPayload = {
   spirits: RpgSpiritProgress[];
   stories: RpgSpiritStory[];
   whisper: RpgSpiritWhisper | null;
+  leaderboard: RpgLeaderRow[];
 };
 
 export async function loadRpgState(): Promise<BoardPayload> {
@@ -460,6 +462,11 @@ export async function loadRpgState(): Promise<BoardPayload> {
     whisper?: RpgSpiritWhisper | null;
   } | null) ?? { spirits: [], stories: [], whisper: null };
 
+  const { data: board } = await supabase.rpc("rpg_leaderboard", {
+    p_actor: userId,
+    p_secret: secret,
+  });
+
   return {
     profile: payload.profile,
     attributes: payload.attributes ?? [],
@@ -471,5 +478,6 @@ export async function loadRpgState(): Promise<BoardPayload> {
     spirits: spirits.spirits ?? [],
     stories: spirits.stories ?? [],
     whisper: spirits.whisper ?? null,
+    leaderboard: (board as RpgLeaderRow[] | null) ?? [],
   };
 }

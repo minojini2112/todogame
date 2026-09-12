@@ -89,6 +89,14 @@ export type RpgSpiritProgress = {
   points: number;
 };
 
+export type RpgLeaderRow = {
+  rank: number;
+  user_id: string;
+  name: string;
+  points: number;
+  cards: number;
+};
+
 export type RpgSpiritWhisper = {
   id: string;
   spirit_id: RpgSpiritId;
