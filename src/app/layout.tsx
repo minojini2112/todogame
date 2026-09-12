@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
-import { Manrope, Orbitron } from "next/font/google";
+import type { ReactNode } from "react";
+import { Cinzel, Manrope, Oxanium } from "next/font/google";
 import "./globals.css";
+
+const oxanium = Oxanium({
+  variable: "--font-oxanium",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -8,27 +15,33 @@ const manrope = Manrope({
   display: "swap",
 });
 
-const orbitron = Orbitron({
-  variable: "--font-orbitron",
+const cinzel = Cinzel({
+  variable: "--font-splash",
   subsets: ["latin"],
+  weight: ["400", "500"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "EchoBound — The Last City",
+  title: {
+    default: "EchoBound",
+    template: "%s · EchoBound",
+  },
   description:
-    "Wake in ruined Aurelia. Bind your Skyform. Restore the city through real-world quests.",
+    "A gamified life RPG. Wake in ruined Aurelia, bind with Skyform, and restore the last city through real-world quests.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: ReactNode;
+}>) {
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${orbitron.variable} h-full antialiased font-sans`}
+      className={`${oxanium.variable} ${manrope.variable} ${cinzel.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-void text-text">
-        {children}
-      </body>
+      <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>
   );
 }

@@ -1,5 +1,5 @@
-import HomeHero from "@/components/home/HomeHero";
+import { SplashScreen } from "@/components/intro/SplashScreen";
 
 export default function Home() {
-  return <HomeHero />;
+  return <SplashScreen />;
 }

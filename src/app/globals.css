@@ -2,63 +2,178 @@
 
 :root {
   --void: #07111f;
+  --surface: #0d1c2d;
   --deep: #0d1c2d;
   --glass: rgba(17, 42, 66, 0.72);
-  --cyan: #55e6ff;
-  --violet: #9d7bff;
-  --gold: #ffc857;
-  --coral: #ff6b6b;
-  --heal: #72f1b8;
+  --heartlight: #55e6ff;
+  --signal: #9d7bff;
+  --cure: #ffc857;
+  --warning: #ff6b6b;
+  --healing: #72f1b8;
+  --ink: #f2f8ff;
   --muted: #9db0c7;
-  --text: #f2f8ff;
+
+  /* Aliases so city map + older components keep working */
+  --cyan: var(--heartlight);
+  --violet: var(--signal);
+  --gold: var(--cure);
+  --coral: var(--warning);
+  --heal: var(--healing);
+  --text: var(--ink);
   --background: var(--void);
-  --foreground: var(--text);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-void: var(--void);
+  --color-surface: var(--surface);
   --color-deep: var(--deep);
   --color-glass: var(--glass);
+  --color-heartlight: var(--heartlight);
+  --color-signal: var(--signal);
+  --color-cure: var(--cure);
+  --color-warning: var(--warning);
+  --color-healing: var(--healing);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
   --color-cyan: var(--cyan);
   --color-violet: var(--violet);
   --color-gold: var(--gold);
   --color-coral: var(--coral);
   --color-heal: var(--heal);
-  --color-muted: var(--muted);
   --color-text: var(--text);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-orbitron), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-oxanium), ui-sans-serif, system-ui, sans-serif;
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  html {
+    background: var(--void);
+    color: var(--ink);
+  }
+
+  body {
+    min-height: 100%;
+    background:
+      radial-gradient(ellipse 90% 55% at 50% -10%, rgba(85, 230, 255, 0.1), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 100%, rgba(157, 123, 255, 0.1), transparent 50%),
+      var(--void);
+    color: var(--ink);
+    font-family: var(--font-sans);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--heartlight);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--heartlight) 40%, transparent);
+    color: var(--ink);
+  }
 }
 
-html {
-  scroll-behavior: smooth;
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-splash {
+    font-family: var(--font-splash), ui-serif, Georgia, serif;
+  }
+
+  .bg-world-grid {
+    background-image:
+      linear-gradient(rgba(85, 230, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(85, 230, 255, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 18px rgba(85, 230, 255, 0.45);
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 18px rgba(255, 200, 87, 0.4);
+  }
+
+  .animate-shimmer {
+    animation: shimmer-sweep 2.4s ease-in-out infinite;
+  }
+
+  .animate-mote {
+    animation: mote-drift 3.2s ease-in-out infinite;
+  }
+
+  .animate-mote-fast {
+    animation: mote-drift 1.4s ease-in-out infinite;
+  }
+
+  .animate-pulse-ring {
+    animation: pulse-ring 2.8s ease-out infinite;
+  }
+
+  .animate-pulse-ring-fast {
+    animation: pulse-ring 1.4s ease-out infinite;
+  }
 }
 
-body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--void);
-  color: var(--text);
-  font-family: var(--font-sans);
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-30%) skewX(-24deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateX(280%) skewX(-24deg);
+    opacity: 0;
+  }
 }
 
-::selection {
-  background: color-mix(in srgb, var(--cyan) 40%, transparent);
-  color: var(--text);
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
 }
 
-:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: 3px;
+@keyframes mote-drift {
+  0%,
+  100% {
+    transform: translateY(0) scale(0.7);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.15);
+    opacity: 0.95;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-shimmer,
+  .animate-mote,
+  .animate-mote-fast,
+  .animate-pulse-ring,
+  .animate-pulse-ring-fast {
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {
