@@ -75,12 +75,12 @@ export default function PathNetwork({
           y2={edge.y2}
           stroke={
             edge.locked
-              ? "rgba(157,176,199,0.18)"
+              ? "rgba(85,230,255,0.45)"
               : edge.active
-                ? "rgba(85,230,255,0.75)"
-                : "rgba(255,200,87,0.35)"
+                ? "rgba(154,243,255,0.95)"
+                : "rgba(85,230,255,0.7)"
           }
-          strokeWidth={edge.active ? 0.35 : 0.22}
+          strokeWidth={edge.active ? 0.42 : 0.3}
           strokeDasharray={edge.locked ? "1.2 1.2" : edge.active ? "0" : "0.8 0.8"}
           strokeLinecap="round"
         />

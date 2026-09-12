@@ -11,7 +11,7 @@ import {
   Footprints,
 } from "lucide-react";
 import { TOWER_MAP, areConnected } from "@/lib/city/towers";
-import { CITY_ZOOM, useCityMapStore } from "@/store/cityMapStore";
+import { useCityMapStore } from "@/store/cityMapStore";
 import { cn } from "@/lib/utils";
 
 export default function MapHUD() {
@@ -101,31 +101,33 @@ export default function MapHUD() {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-40 p-4 sm:p-5">
-        <div className="pointer-events-auto mx-auto flex max-w-xl flex-col gap-3 rounded-2xl border border-white/10 bg-void/75 p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+      <div className="pointer-events-none absolute top-1/2 right-4 z-40 w-[220px] -translate-y-1/2 sm:right-5">
+        <div className="pointer-events-auto flex flex-col gap-4 rounded-2xl border border-white/10 bg-void/80 px-4 py-5 backdrop-blur-xl">
           {selected ? (
             <>
-              <div className="min-w-0">
-                <p className="font-display text-[10px] tracking-[0.24em] text-muted uppercase">
-                  Target Tower · Level {selected.level}
+              <div>
+                <p className="font-display text-[10px] tracking-[0.22em] text-muted uppercase">
+                  Target · Lv {selected.level}
                   {areConnected(currentTowerId, selected.id)
                     ? " · Linked"
                     : selected.id === currentTowerId
                       ? ""
-                      : " · Route via bridges"}
+                      : " · Route"}
                 </p>
-                <h2 className="truncate font-display text-lg tracking-wide text-text">
+                <h2 className="mt-1.5 font-display text-base leading-snug tracking-wide text-text">
                   {selected.name}
                 </h2>
-                <p className="text-sm text-muted">
-                  {selected.subtitle} · {selected.district}
+                <p className="mt-1 text-xs leading-5 text-muted">
+                  {selected.subtitle}
+                  <br />
+                  {selected.district}
                 </p>
               </div>
 
-              <div className="flex shrink-0 gap-2">
+              <div className="flex flex-col gap-2">
                 <button
                   type="button"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-muted transition hover:border-cyan/40 hover:text-text"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/15 px-3 py-2 text-sm text-muted transition hover:border-cyan/40 hover:text-text"
                   onClick={() => focusTower(selected.id)}
                 >
                   <Compass className="h-4 w-4" />
@@ -136,7 +138,7 @@ export default function MapHUD() {
                   disabled={!canTravel || selected.status === "locked"}
                   onClick={() => travelTo(selected.id)}
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-full px-4 py-2 font-display text-xs tracking-[0.16em] uppercase transition",
+                    "inline-flex w-full items-center justify-center gap-2 rounded-full px-3 py-2 font-display text-[11px] tracking-[0.14em] uppercase transition",
                     selected.status === "locked"
                       ? "cursor-not-allowed bg-white/5 text-muted"
                       : canTravel
@@ -162,15 +164,10 @@ export default function MapHUD() {
             </>
           ) : (
             <p className="text-sm text-muted">
-              Select a tower to travel. Scroll to zoom · drag to pan.
+              Select a tower to travel.
             </p>
           )}
         </div>
-
-        <p className="mt-2 text-center text-[10px] tracking-wide text-muted/70">
-          Zoom {CITY_ZOOM.min}x–{CITY_ZOOM.max}x · Move tower to tower along lit
-          paths
-        </p>
       </div>
 
       <div className="sr-only" aria-live="polite">

@@ -1,11 +1,9 @@
 export type TowerId =
-  | "heartlight"
-  | "academy"
-  | "power_grid"
-  | "healing_gardens"
-  | "archive_gate"
-  | "innovation_lab"
-  | "community_quarter";
+  | "dawn_hall"
+  | "river_bridge"
+  | "colonnade"
+  | "heartlight_ring"
+  | "apex_spire";
 
 export type TowerStatus = "restored" | "active" | "damaged" | "locked";
 
@@ -13,7 +11,6 @@ export interface TowerNode {
   id: TowerId;
   name: string;
   subtitle: string;
-  /** Position on map image, percent (0–100) */
   x: number;
   y: number;
   status: TowerStatus;
@@ -23,86 +20,64 @@ export interface TowerNode {
 }
 
 /**
- * Hotspots aligned to landmarks on the Aurelia city plate.
- * Coordinates are % of the map image so they scale with zoom.
+ * Linear restoration path across the Aurelia plate.
+ * 1 hall → 2 bridge → 3 colonnade → 4 heartlight ring → 5 apex (save the city)
  */
 export const TOWERS: TowerNode[] = [
   {
-    id: "heartlight",
-    name: "Heartlight Spire",
-    subtitle: "Command nexus",
-    x: 50.2,
-    y: 46.8,
+    id: "dawn_hall",
+    name: "Dawn Hall",
+    subtitle: "First location",
+    x: 38.2,
+    y: 63.8,
     status: "active",
     level: 1,
-    connections: ["academy", "power_grid", "healing_gardens", "community_quarter"],
+    connections: ["river_bridge"],
+    district: "Outer Sanctum",
+  },
+  {
+    id: "river_bridge",
+    name: "River Bridge",
+    subtitle: "Cross the canal",
+    x: 65.8,
+    y: 61.6,
+    status: "damaged",
+    level: 2,
+    connections: ["dawn_hall", "colonnade"],
+    district: "Canal Crossing",
+  },
+  {
+    id: "colonnade",
+    name: "Gold Colonnade",
+    subtitle: "The inner court",
+    x: 54.6,
+    y: 52.4,
+    status: "damaged",
+    level: 3,
+    connections: ["river_bridge", "heartlight_ring"],
+    district: "Palace Court",
+  },
+  {
+    id: "heartlight_ring",
+    name: "Heartlight Ring",
+    subtitle: "Command nexus",
+    x: 50.2,
+    y: 47.2,
+    status: "damaged",
+    level: 4,
+    connections: ["colonnade", "apex_spire"],
     district: "Heartlight Core",
   },
   {
-    id: "academy",
-    name: "Academy Tower",
-    subtitle: "Focus & study",
-    x: 41.5,
-    y: 41.2,
+    id: "apex_spire",
+    name: "Apex Spire",
+    subtitle: "Save the city",
+    x: 50.2,
+    y: 27.6,
     status: "damaged",
-    level: 2,
-    connections: ["heartlight", "archive_gate", "community_quarter"],
-    district: "Academy District",
-  },
-  {
-    id: "power_grid",
-    name: "Grid Pylon",
-    subtitle: "Endurance & energy",
-    x: 59.8,
-    y: 43.5,
-    status: "damaged",
-    level: 2,
-    connections: ["heartlight", "innovation_lab", "community_quarter"],
-    district: "Power Grid",
-  },
-  {
-    id: "healing_gardens",
-    name: "Garden Sanctum",
-    subtitle: "Recovery rituals",
-    x: 47.8,
-    y: 58.4,
-    status: "damaged",
-    level: 3,
-    connections: ["heartlight", "archive_gate", "innovation_lab"],
-    district: "Healing Gardens",
-  },
-  {
-    id: "archive_gate",
-    name: "Archive Gate",
-    subtitle: "First expedition",
-    x: 33.6,
-    y: 54.2,
-    status: "active",
-    level: 3,
-    connections: ["academy", "healing_gardens"],
-    district: "Archive Ruins",
-  },
-  {
-    id: "innovation_lab",
-    name: "Innovation Spire",
-    subtitle: "Creation quests",
-    x: 67.4,
-    y: 55.8,
-    status: "locked",
-    level: 4,
-    connections: ["power_grid", "healing_gardens"],
-    district: "Innovation Lab",
-  },
-  {
-    id: "community_quarter",
-    name: "Bridge Quarter",
-    subtitle: "Connection tasks",
-    x: 50.5,
-    y: 34.6,
-    status: "locked",
-    level: 4,
-    connections: ["heartlight", "academy", "power_grid"],
-    district: "Community Quarter",
+    level: 5,
+    connections: ["heartlight_ring"],
+    district: "The Last Light",
   },
 ];
 
@@ -118,7 +93,6 @@ export function getTravelPath(from: TowerId, to: TowerId): TowerId[] | null {
   if (from === to) return [from];
   if (areConnected(from, to)) return [from, to];
 
-  // BFS for multi-hop routes
   const queue: TowerId[][] = [[from]];
   const seen = new Set<TowerId>([from]);
 

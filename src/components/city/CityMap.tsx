@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -19,17 +20,11 @@ import PathNetwork from "./PathNetwork";
 import PlayerMarker from "./PlayerMarker";
 import TowerMarker from "./TowerMarker";
 import MapHUD from "./MapHUD";
-import WorldSeam from "./WorldSeam";
+import CityArrival from "./CityArrival";
 
-/** One city tile size */
-const TILE_W = 2400;
-const TILE_H = 1600;
-/** 3×3 world so edges always continue */
-const WORLD_W = TILE_W * 3;
-const WORLD_H = TILE_H * 3;
-/** Playable city sits in the center tile */
-const ORIGIN_X = TILE_W;
-const ORIGIN_Y = TILE_H;
+/** Single city image — no tiled copies. */
+const MAP_W = 2400;
+const MAP_H = 1600;
 
 function clampPan(
   panX: number,
@@ -38,8 +33,8 @@ function clampPan(
   viewW: number,
   viewH: number,
 ) {
-  const scaledW = WORLD_W * zoom;
-  const scaledH = WORLD_H * zoom;
+  const scaledW = MAP_W * zoom;
+  const scaledH = MAP_H * zoom;
 
   let nextX = panX;
   let nextY = panY;
@@ -105,8 +100,8 @@ export default function CityMap() {
       if (!viewport) return;
       const tower = TOWER_MAP[id];
       const { width, height } = viewport.getBoundingClientRect();
-      const worldX = (ORIGIN_X + (tower.x / 100) * TILE_W) * nextZoom;
-      const worldY = (ORIGIN_Y + (tower.y / 100) * TILE_H) * nextZoom;
+      const worldX = (tower.x / 100) * MAP_W * nextZoom;
+      const worldY = (tower.y / 100) * MAP_H * nextZoom;
       applyPan(width / 2 - worldX, height / 2 - worldY, nextZoom);
     },
     [applyPan],
@@ -129,7 +124,6 @@ export default function CityMap() {
     return () => window.clearTimeout(timer);
   }, [isTraveling, travelPath, finishTravelStep, reduceMotion]);
 
-  // Re-clamp on resize
   useEffect(() => {
     const onResize = () => applyPan(panX, panY, zoom);
     window.addEventListener("resize", onResize);
@@ -146,7 +140,7 @@ export default function CityMap() {
     const cursorY = event.clientY - rect.top;
 
     const delta = event.deltaY > 0 ? -0.12 : 0.12;
-    const nextZoom = Math.min(2.6, Math.max(0.55, zoom + delta));
+    const nextZoom = Math.min(2.6, Math.max(0.7, zoom + delta));
     if (nextZoom === zoom) return;
 
     const worldX = (cursorX - panX) / zoom;
@@ -206,36 +200,26 @@ export default function CityMap() {
           selectTower(currentTowerId);
         }}
         role="application"
-        aria-label="Aurelia city map. Scroll to zoom, drag to pan, select towers to travel."
+        aria-label="Aurelia city map. Drag to look around. Travel moves to the next location."
       >
         <div
           className="absolute left-0 top-0 origin-top-left will-change-transform"
           style={{
-            width: WORLD_W,
-            height: WORLD_H,
+            width: MAP_W,
+            height: MAP_H,
             transform: `translate(${panX}px, ${panY}px) scale(${zoom})`,
             transition: reduceMotion ? undefined : "transform 80ms linear",
           }}
         >
-          {/* Continuous world — no blue gaps */}
-          <WorldSeam />
-
-          {/* Playable center city layer */}
-          <div
-            className="absolute"
-            style={{
-              left: ORIGIN_X,
-              top: ORIGIN_Y,
-              width: TILE_W,
-              height: TILE_H,
-            }}
-          >
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, transparent 50%, rgba(7,17,31,0.18) 100%)",
-              }}
+          <div className="relative h-full w-full overflow-hidden">
+            <Image
+              src="/aurelia/home-city.png"
+              alt="Aurelia"
+              fill
+              priority
+              sizes="2400px"
+              className="object-cover object-center select-none"
+              draggable={false}
             />
 
             <PathNetwork
@@ -271,6 +255,7 @@ export default function CityMap() {
       </div>
 
       <MapHUD />
+      <CityArrival />
     </div>
   );
 }
