@@ -3,21 +3,26 @@
 import { Minus, Plus, RotateCcw } from "lucide-react";
 import { TOWERS } from "@/lib/city/towers";
 import { SPIRIT_UNLOCK } from "@/modules/rpg/spirits";
-import type { RpgSpiritProgress } from "@/modules/rpg/types";
+import type { RpgLeaderRow, RpgSpiritProgress } from "@/modules/rpg/types";
 import { useCityMapStore } from "@/store/cityMapStore";
 import { EchoBondMenu } from "@/components/city/EchoBondMenu";
 import { CityStoryLine } from "@/components/city/CityStoryLine";
+import { CityLeaderStream } from "@/components/city/CityLeaderStream";
 
 export default function MapHUD({
   spirits,
   recovered,
   onZoomBy,
   onReset,
+  leaderboard,
+  youId,
 }: {
   spirits: RpgSpiritProgress[];
   recovered: boolean;
   onZoomBy: (delta: number) => void;
   onReset: () => void;
+  leaderboard: RpgLeaderRow[];
+  youId: string;
 }) {
   const zoom = useCityMapStore((s) => s.zoom);
   const awakeCount = TOWERS.filter((tower) => {
@@ -76,6 +81,7 @@ export default function MapHUD({
         </div>
       </div>
 
+      <CityLeaderStream rows={leaderboard} youId={youId} />
       <CityStoryLine spirits={spirits} recovered={recovered} />
       <EchoBondMenu />
     </>

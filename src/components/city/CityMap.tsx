@@ -11,7 +11,7 @@ import {
 import { useReducedMotion } from "motion/react";
 import { TOWERS } from "@/lib/city/towers";
 import { SPIRIT_UNLOCK } from "@/modules/rpg/spirits";
-import type { RpgSpiritProgress } from "@/modules/rpg/types";
+import type { RpgLeaderRow, RpgSpiritProgress } from "@/modules/rpg/types";
 import { useCityMapStore } from "@/store/cityMapStore";
 import TowerMarker from "./TowerMarker";
 import MapHUD from "./MapHUD";
@@ -56,7 +56,15 @@ function centerPan(zoom: number, viewW: number, viewH: number) {
   return clampPan((viewW - MAP_W * zoom) / 2, (viewH - MAP_H * zoom) / 2, zoom, viewW, viewH);
 }
 
-export default function CityMap({ spirits }: { spirits: RpgSpiritProgress[] }) {
+export default function CityMap({
+  spirits,
+  leaderboard,
+  youId,
+}: {
+  spirits: RpgSpiritProgress[];
+  leaderboard: RpgLeaderRow[];
+  youId: string;
+}) {
   const reduceMotion = useReducedMotion();
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -250,6 +258,8 @@ export default function CityMap({ spirits }: { spirits: RpgSpiritProgress[] }) {
       <MapHUD
         spirits={spirits}
         recovered={recovered}
+        leaderboard={leaderboard}
+        youId={youId}
         onZoomBy={(delta) => zoomToward(delta)}
         onReset={() => {
           const viewport = viewportRef.current;

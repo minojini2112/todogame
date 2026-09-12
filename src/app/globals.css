@@ -136,6 +136,10 @@
   .animate-pulse-ring-fast {
     animation: pulse-ring 1.4s ease-out infinite;
   }
+
+  .city-live-rise {
+    animation: city-live-rise 3.1s ease-out both;
+  }
 }
 
 @keyframes shimmer-sweep {
@@ -179,6 +183,23 @@
   }
 }
 
+@keyframes city-live-rise {
+  0% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -188,7 +209,8 @@
   .animate-mote,
   .animate-mote-fast,
   .animate-pulse-ring,
-  .animate-pulse-ring-fast {
+  .animate-pulse-ring-fast,
+  .city-live-rise {
     animation: none !important;
   }
 }

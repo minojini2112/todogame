@@ -53,7 +53,7 @@ export const TOWERS: TowerNode[] = [
     connections: ["dawn_hall", "colonnade"],
     district: "Finishing before the hour closes.",
     image: "/assests/spirit_wolf.jpg",
-    cardSide: "right",
+    cardSide: "left",
   },
   {
     id: "colonnade",
@@ -67,7 +67,7 @@ export const TOWERS: TowerNode[] = [
     connections: ["river_bridge", "heartlight_ring"],
     district: "Care, rest, and quiet kindness.",
     image: "/assests/spirit_deer.jpg",
-    cardSide: "left",
+    cardSide: "right",
   },
   {
     id: "heartlight_ring",
