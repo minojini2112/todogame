@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { AwakenForm } from "@/modules/rpg/components/AwakenForm";
+import { getOptionalUserId } from "@/lib/clerk-auth";
 
 export const metadata: Metadata = {
   title: "Bind your signal",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AwakenPage() {
-  const { userId } = await auth();
+  const userId = await getOptionalUserId();
   if (userId) {
     redirect("/board");
   }

@@ -1,8 +1,9 @@
 import { SignUp } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { clerkAppearance } from "@/lib/clerk-appearance";
+import { getOptionalUserId } from "@/lib/clerk-auth";
+import { isClerkConfigured } from "@/lib/clerk";
 
 export const metadata = {
   title: "Sign up",
@@ -12,7 +13,11 @@ export const metadata = {
 const AFTER_AUTH = "/city";
 
 export default async function SignUpPage() {
-  const { userId } = await auth();
+  if (!isClerkConfigured) {
+    redirect("/");
+  }
+
+  const userId = await getOptionalUserId();
   if (userId) {
     redirect(AFTER_AUTH);
   }

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Cinzel, Manrope, Oxanium } from "next/font/google";
 import { clerkAppearance } from "@/lib/clerk-appearance";
-import { isClerkConfigured } from "@/lib/clerk";
+import { getClerkPublishableKey, isClerkConfigured } from "@/lib/clerk";
 import "./globals.css";
 
 const oxanium = Oxanium({
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     "A gamified life RPG. Wake in ruined Aurelia, bind with Skyform, and restore the last city through real-world quests.",
 };
 
-const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.trim();
+const publishableKey = getClerkPublishableKey();
 const afterAuthUrl = "/city";
 
 export default function RootLayout({
