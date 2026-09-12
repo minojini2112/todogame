@@ -88,7 +88,7 @@ export async function createQuestAction(
 ): Promise<ActionState> {
   const fields = readQuestFields(formData);
   if (!fields.title) {
-    return { ok: false, message: "Enter a task name." };
+    return { ok: false, message: "Enter a quest name." };
   }
 
   const { supabase, userId, secret } = await requireUser();
@@ -131,7 +131,7 @@ export async function updateQuestAction(
     return { ok: false, message: "That task is gone. Refresh the board and try again." };
   }
   if (!fields.title) {
-    return { ok: false, message: "Enter a task name." };
+    return { ok: false, message: "Enter a quest name." };
   }
 
   const { supabase, userId, secret } = await requireUser();

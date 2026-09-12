@@ -36,7 +36,7 @@ export function SpiritCards({
                   alt={spirit.name}
                   fill
                   sizes="(max-width: 640px) 100vw, 40vw"
-                  className={spirit.id === "eagle" ? "object-contain p-3" : "object-cover object-center"}
+                  className="object-contain p-3"
                 />
                 <div
                   aria-hidden
@@ -104,7 +104,7 @@ function SpiritStorySheet({
             alt={spirit.name}
             fill
             sizes="500px"
-            className={spirit.id === "eagle" ? "object-contain p-2" : "object-cover object-center"}
+            className="object-contain p-2"
           />
         </div>
         <p className="text-[11px] tracking-[0.28em] text-[var(--sanctum-gold)] uppercase">{spirit.trait}</p>

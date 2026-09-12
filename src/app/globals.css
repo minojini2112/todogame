@@ -102,6 +102,83 @@
     backdrop-filter: blur(16px);
   }
 
+  .sanctum-panel-glow {
+    box-shadow:
+      0 18px 50px rgba(6, 4, 2, 0.4),
+      0 0 0 1px rgba(232, 196, 140, 0.08),
+      inset 0 1px 0 rgba(255, 236, 200, 0.06);
+  }
+
+  .sanctum-motes {
+    background-image:
+      radial-gradient(1.5px 1.5px at 12% 22%, rgba(228, 180, 92, 0.55), transparent),
+      radial-gradient(1px 1px at 38% 64%, rgba(246, 239, 226, 0.4), transparent),
+      radial-gradient(1.5px 1.5px at 72% 18%, rgba(228, 180, 92, 0.4), transparent),
+      radial-gradient(1px 1px at 86% 78%, rgba(246, 239, 226, 0.35), transparent),
+      radial-gradient(1.5px 1.5px at 54% 42%, rgba(212, 104, 58, 0.35), transparent);
+    animation: sanctum-drift 18s ease-in-out infinite alternate;
+  }
+
+  .sanctum-add-orb {
+    box-shadow: 0 0 0 0 rgba(228, 180, 92, 0.35);
+    animation: sanctum-pulse 2.8s ease-in-out infinite;
+  }
+
+  .sanctum-rite:hover {
+    box-shadow:
+      0 10px 28px rgba(6, 4, 2, 0.35),
+      inset 0 1px 0 rgba(255, 236, 200, 0.08);
+  }
+
+  .sanctum-seal:not(:disabled):hover {
+    border-color: rgba(228, 180, 92, 0.75);
+    box-shadow: 0 0 12px rgba(228, 180, 92, 0.35);
+  }
+
+  @keyframes sanctum-drift {
+    from {
+      transform: translate3d(0, 0, 0);
+      opacity: 0.35;
+    }
+    to {
+      transform: translate3d(0, -12px, 0);
+      opacity: 0.55;
+    }
+  }
+
+  @keyframes sanctum-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(228, 180, 92, 0.35);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(228, 180, 92, 0);
+    }
+  }
+
+  @keyframes sanctum-spark-float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+      opacity: 0.55;
+    }
+    50% {
+      transform: translate3d(0, -14px, 0);
+      opacity: 1;
+    }
+  }
+
+  .sanctum-chip:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sanctum-motes,
+    .sanctum-add-orb {
+      animation: none;
+    }
+  }
+
   .bg-world-grid {
     background-image:
       linear-gradient(rgba(85, 230, 255, 0.04) 1px, transparent 1px),

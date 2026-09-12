@@ -1,10 +1,12 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { motion } from "framer-motion";
 import { QUEST_PRIORITIES } from "@/modules/rpg/catalog";
 import { updateQuestAction, type ActionState } from "@/modules/rpg/actions";
 import { RepeatFields } from "@/modules/rpg/components/RepeatFields";
 import { formatBound, formatDue, formatRepeat, formatRepeatDone, toLocalInput } from "@/modules/rpg/format";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { RpgGroup, RpgPriority, RpgQuest } from "@/modules/rpg/types";
 
 const priorityTone: Record<RpgPriority, string> = {
@@ -29,39 +31,50 @@ export function CodexRiteRow({
   onComplete,
   onDelete,
 }: CodexRiteRowProps) {
+  const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
   const done = quest.status === "completed";
   const overdue = Boolean(quest.due_at && !done && new Date(quest.due_at).getTime() < Date.now());
 
   return (
-    <article
-      draggable={!done}
-      onDragStart={(event) => {
-        event.dataTransfer.setData("text/quest-id", quest.id);
-        event.dataTransfer.effectAllowed = "move";
-      }}
-      className="rounded-2xl border border-[rgba(232,196,140,0.32)] bg-[rgba(18,13,9,0.55)] px-3 py-3"
+    <motion.article
+      layout={!reduced}
+      whileHover={reduced || done ? undefined : { y: -2 }}
+      className="sanctum-rite group rounded-2xl border border-[rgba(232,196,140,0.32)] bg-[rgba(18,13,9,0.55)] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:border-[rgba(228,180,92,0.55)]"
     >
-      <div className="flex items-start gap-2">
-        <button
+      <div
+        draggable={!done}
+        onDragStart={(event) => {
+          event.dataTransfer.setData("text/quest-id", quest.id);
+          event.dataTransfer.effectAllowed = "move";
+        }}
+        className="flex items-start gap-2"
+      >
+        <motion.button
           type="button"
-          aria-label={done ? `${quest.title} completed` : `Complete ${quest.title}`}
+          aria-label={done ? `${quest.title} completed` : `Complete quest ${quest.title}`}
           disabled={done || busy}
           onClick={onComplete}
-          className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-[rgba(232,196,140,0.35)] text-[10px] text-[#1a1208] disabled:opacity-70"
+          whileTap={reduced || done ? undefined : { scale: 0.86 }}
+          className="sanctum-seal mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-[rgba(232,196,140,0.35)] text-[10px] text-[#1a1208] transition disabled:opacity-70"
           style={{
             background: done ? "var(--sanctum-gold)" : "transparent",
+            boxShadow: done ? "0 0 14px rgba(228,180,92,0.55)" : undefined,
           }}
         >
           {done ? "✦" : ""}
-        </button>
+        </motion.button>
 
         <button
           type="button"
           className="min-w-0 flex-1 text-left"
           onClick={() => setOpen((value) => !value)}
         >
-          <p className={`text-sm leading-5 ${done ? "text-[var(--sanctum-muted)] line-through" : ""}`}>
+          <p
+            className={`text-sm leading-5 ${
+              done ? "text-[var(--sanctum-muted)] line-through" : "text-[var(--sanctum-ink)]"
+            }`}
+          >
             {quest.title}
           </p>
           <p className="mt-1 flex flex-wrap gap-x-2 gap-y-1 text-[11px] text-[var(--sanctum-muted)]">
@@ -72,13 +85,17 @@ export function CodexRiteRow({
             {formatRepeat(quest) ? (
               <span className="text-[var(--sanctum-gold)]">{formatRepeat(quest)}</span>
             ) : null}
-            <span>+{quest.xp_reward} XP</span>
+            <span className="text-[var(--sanctum-gold)]/80">+{quest.xp_reward} XP</span>
           </p>
         </button>
       </div>
 
       {open ? (
-        <div className="mt-3 border-t border-[rgba(232,196,140,0.12)] pt-3">
+        <motion.div
+          initial={reduced ? false : { opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="mt-3 overflow-hidden border-t border-[rgba(232,196,140,0.12)] pt-3"
+        >
           {quest.description ? (
             <p className="mb-3 text-sm leading-6 text-[var(--sanctum-muted)]">{quest.description}</p>
           ) : null}
@@ -91,9 +108,9 @@ export function CodexRiteRow({
           {!done || quest.repeat_rule !== "none" ? (
             <EditRiteForm quest={quest} groups={groups} onDone={() => setOpen(false)} onDelete={onDelete} />
           ) : null}
-        </div>
+        </motion.div>
       ) : null}
-    </article>
+    </motion.article>
   );
 }
 
@@ -126,7 +143,7 @@ function EditRiteForm({
         required
         defaultValue={quest.title}
         className={inputClass}
-        aria-label="Task name"
+        aria-label="Quest name"
       />
       <textarea
         name="description"
@@ -156,7 +173,7 @@ function EditRiteForm({
           name="due_at"
           defaultValue={toLocalInput(quest.due_at)}
           className={inputClass}
-          aria-label="Complete by"
+          aria-label="Due date"
         />
         <RepeatFields
           fieldClass={inputClass}
@@ -172,14 +189,14 @@ function EditRiteForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-[var(--sanctum-gold)] px-4 py-2 text-sm text-[#1a1208]"
+          className="rounded-full bg-[var(--sanctum-gold)] px-4 py-2 font-display text-[11px] tracking-[0.14em] text-[#1a1208] uppercase"
         >
           {pending ? "Saving…" : "Save"}
         </button>
         <button
           type="button"
           onClick={onDelete}
-          className="rounded-full px-4 py-2 text-sm text-[var(--sanctum-muted)] hover:text-[var(--sanctum-ink)]"
+          className="rounded-full px-4 py-2 text-sm text-[var(--sanctum-muted)] transition hover:text-[#f0a07a]"
         >
           Delete
         </button>
@@ -189,4 +206,4 @@ function EditRiteForm({
 }
 
 const inputClass =
-  "h-10 w-full rounded-lg border border-[rgba(232,196,140,0.16)] bg-[rgba(10,8,6,0.45)] px-3 text-sm text-[var(--sanctum-ink)] outline-none focus-visible:border-[var(--sanctum-gold)]";
+  "h-10 w-full rounded-lg border border-[rgba(232,196,140,0.16)] bg-[rgba(10,8,6,0.45)] px-3 text-sm text-[var(--sanctum-ink)] outline-none transition focus-visible:border-[var(--sanctum-gold)] focus-visible:shadow-[0_0_0_3px_rgba(228,180,92,0.12)]";

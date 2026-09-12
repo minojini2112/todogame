@@ -2,7 +2,7 @@ export function rpgErrorMessage(error: unknown, fallback = "The signal faltered.
   if (error && typeof error === "object" && "message" in error) {
     const message = String((error as { message: unknown }).message);
     if (message.includes("Quest title required") || message.includes("Task title required")) {
-      return "Enter a task name.";
+      return "Enter a quest name.";
     }
     if (message.includes("Name the codex") || message.includes("List name required")) {
       return "Enter a list name.";

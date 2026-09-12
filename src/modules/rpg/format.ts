@@ -6,7 +6,8 @@ export function formatRepeat(quest: Pick<RpgQuest, "repeat_rule" | "repeat_every
   if (rule === "none") return null;
   if (rule === "custom") {
     const count = quest.repeat_every ?? 1;
-    const unit = QUEST_REPEAT_UNITS.find((item) => item.id === quest.repeat_unit)?.label.toLowerCase() ?? "days";
+    const unit =
+      QUEST_REPEAT_UNITS.find((item) => item.id === quest.repeat_unit)?.label.toLowerCase() ?? "days";
     const singular = unit.replace(/s$/, "");
     return `Every ${count} ${count === 1 ? singular : unit}`;
   }
@@ -16,7 +17,7 @@ export function formatRepeat(quest: Pick<RpgQuest, "repeat_rule" | "repeat_every
 export function formatRepeatDone(quest: Pick<RpgQuest, "repeat_rule" | "repeat_every" | "repeat_unit">) {
   const label = formatRepeat(quest);
   if (!label) return null;
-  return `Done for now. Comes back ${label.toLowerCase()}.`;
+  return `Done for now. Returns ${label.toLowerCase()}.`;
 }
 
 export function formatBound(iso: string) {

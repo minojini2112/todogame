@@ -40,7 +40,7 @@ export function SpiritGainPopup({
             alt={spirit.name}
             fill
             sizes="400px"
-            className={spirit.id === "eagle" ? "object-contain p-2" : "object-cover object-center"}
+            className="object-contain p-2"
           />
         </div>
         <p className="text-[11px] tracking-[0.28em] text-[var(--sanctum-gold)] uppercase">{spirit.trait}</p>
@@ -48,12 +48,12 @@ export function SpiritGainPopup({
           {spirit.name}
         </h2>
         <p className="mt-2 text-sm text-[var(--sanctum-muted)]">{title}</p>
-        <p className="mt-6 font-splash text-5xl text-[var(--sanctum-gold)]">+{points}</p>
-        <p className="mt-2 text-sm text-[var(--sanctum-muted)]">added to this card</p>
+        <p className="mt-6 font-splash text-5xl text-[var(--sanctum-gold)] text-glow-gold">+{points}</p>
+        <p className="mt-2 text-sm text-[var(--sanctum-muted)]">spirit points earned</p>
         <button
           type="button"
           onClick={onClose}
-          className="mt-8 rounded-full bg-[var(--sanctum-gold)] px-6 py-2.5 text-sm text-[#1a1208]"
+          className="mt-8 rounded-full bg-[var(--sanctum-gold)] px-6 py-2.5 font-display text-xs tracking-[0.16em] text-[#1a1208] uppercase"
         >
           Continue
         </button>

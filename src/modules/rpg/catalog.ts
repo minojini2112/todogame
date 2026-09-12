@@ -60,7 +60,7 @@ export const QUEST_PRIORITIES: {
   meaning: string;
 }[] = [
   { id: "ember", label: "Urgent", meaning: "Do this first." },
-  { id: "gold", label: "High", meaning: "Important." },
+  { id: "gold", label: "High", meaning: "Important soon." },
   { id: "ash", label: "Normal", meaning: "Standard priority." },
   { id: "mist", label: "Low", meaning: "Can wait." },
 ];
@@ -74,11 +74,11 @@ export const QUEST_DIFFICULTIES: QuestDifficulty[] = [
 
 export const QUEST_REPEATS: { id: RpgRepeat; label: string; hint: string }[] = [
   { id: "none", label: "Once", hint: "Done after you complete it." },
-  { id: "daily", label: "Every day", hint: "Comes back after one day." },
-  { id: "weekly", label: "Every week", hint: "Comes back after one week." },
-  { id: "monthly", label: "Every month", hint: "Comes back after one month." },
-  { id: "yearly", label: "Every year", hint: "Comes back after one year." },
-  { id: "custom", label: "Custom", hint: "Pick any gap, up to a year." },
+  { id: "daily", label: "Daily", hint: "Comes back every day." },
+  { id: "weekly", label: "Weekly", hint: "Comes back every week." },
+  { id: "monthly", label: "Monthly", hint: "Comes back every month." },
+  { id: "yearly", label: "Yearly", hint: "Comes back every year." },
+  { id: "custom", label: "Custom", hint: "Pick your own interval." },
 ];
 
 export const QUEST_REPEAT_UNITS: { id: RpgRepeatUnit; label: string; max: number }[] = [
