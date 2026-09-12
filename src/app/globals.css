@@ -85,6 +85,23 @@
     font-family: var(--font-splash), ui-serif, Georgia, serif;
   }
 
+  .sanctum {
+    --sanctum-ink: #f6efe2;
+    --sanctum-muted: #c9b89a;
+    --sanctum-gold: #e4b45c;
+    --sanctum-ember: #d4683a;
+    --sanctum-mist: #9aa7a8;
+    --sanctum-water: #6aa8a4;
+    color: var(--sanctum-ink);
+  }
+
+  .sanctum-panel {
+    background: rgba(16, 11, 8, 0.58);
+    border: 1px solid rgba(232, 196, 140, 0.14);
+    box-shadow: 0 18px 50px rgba(6, 4, 2, 0.35);
+    backdrop-filter: blur(16px);
+  }
+
   .bg-world-grid {
     background-image:
       linear-gradient(rgba(85, 230, 255, 0.04) 1px, transparent 1px),

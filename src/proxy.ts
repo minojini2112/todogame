@@ -23,7 +23,7 @@ function redirectProtectedToAuth(req: NextRequest) {
   return NextResponse.next();
 }
 
-export default hasClerkKeys ? withClerk : redirectProtectedToAuth;
+export const proxy = hasClerkKeys ? withClerk : redirectProtectedToAuth;
 
 export const config = {
   matcher: [
