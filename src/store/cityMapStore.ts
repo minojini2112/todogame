@@ -7,7 +7,7 @@ import {
   getTravelPath,
 } from "@/lib/city/towers";
 
-const MIN_ZOOM = 0.55;
+const MIN_ZOOM = 0.7;
 const MAX_ZOOM = 2.6;
 
 type CityMapState = {
@@ -36,22 +36,16 @@ type CityMapState = {
 };
 
 export const useCityMapStore = create<CityMapState>((set, get) => ({
-  currentTowerId: "heartlight",
-  selectedTowerId: "heartlight",
-  zoom: 1.15,
+  currentTowerId: "dawn_hall",
+  selectedTowerId: "dawn_hall",
+  zoom: 1.35,
   panX: 0,
   panY: 0,
   isTraveling: false,
   travelPath: [],
-  unlockedTowerIds: [
-    "heartlight",
-    "academy",
-    "power_grid",
-    "healing_gardens",
-    "archive_gate",
-  ],
+  unlockedTowerIds: ["dawn_hall", "river_bridge"],
   focusNonce: 0,
-  focusTargetId: "heartlight",
+  focusTargetId: "dawn_hall",
 
   selectTower: (id) => set({ selectedTowerId: id }),
 
@@ -80,11 +74,17 @@ export const useCityMapStore = create<CityMapState>((set, get) => ({
     }
 
     const [next, ...rest] = travelPath;
+    const unlocked = new Set(get().unlockedTowerIds);
+    unlocked.add(next);
+    for (const link of TOWER_MAP[next].connections) {
+      unlocked.add(link);
+    }
     set({
       currentTowerId: next,
       travelPath: rest,
       isTraveling: rest.length > 0,
       selectedTowerId: rest.length ? get().selectedTowerId : next,
+      unlockedTowerIds: [...unlocked],
     });
   },
 

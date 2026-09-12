@@ -61,7 +61,7 @@
       radial-gradient(ellipse 50% 40% at 100% 100%, rgba(157, 123, 255, 0.1), transparent 50%),
       var(--void);
     color: var(--ink);
-    font-family: var(--font-sans);
+    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   }
 
   :focus-visible {
@@ -77,7 +77,8 @@
 
 @layer utilities {
   .font-display {
-    font-family: var(--font-display);
+    font-family: var(--font-oxanium), var(--font-manrope), ui-sans-serif, system-ui,
+      sans-serif;
   }
 
   .font-splash {
@@ -171,14 +172,187 @@
   .animate-mote-fast,
   .animate-pulse-ring,
   .animate-pulse-ring-fast {
-    animation: none;
+    animation: none !important;
   }
+}
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+/* ── Clerk auth (EchoBound) ── */
+.auth-form,
+.auth-form .cl-echobound,
+.auth-form .cl-rootBox,
+.auth-form .cl-cardBox,
+.auth-form .cl-card,
+.auth-form .cl-main,
+.auth-form .cl-form,
+.auth-form .cl-socialButtons,
+.auth-form .cl-socialButtonsBlockButton,
+.auth-form .cl-formField,
+.auth-form .cl-formFieldRow,
+.auth-form .cl-formFieldInputGroup {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.cl-echobound,
+.cl-echobound * {
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif !important;
+}
+
+.cl-echobound.cl-rootBox,
+.cl-echobound .cl-cardBox,
+.cl-echobound .cl-card,
+.cl-echobound .cl-main,
+.cl-echobound .cl-scrollBox {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.cl-echobound .cl-header,
+.cl-echobound .cl-headerTitle,
+.cl-echobound .cl-headerSubtitle,
+.cl-echobound .cl-logoBox,
+.cl-echobound .cl-logoImage {
+  display: none !important;
+}
+
+/* Hide Clerk branding + Development mode badge */
+.cl-echobound .cl-footer .cl-internal-b3fm6y,
+.cl-echobound a[href*="clerk.com"],
+.cl-echobound a[href*="clerk.dev"],
+.cl-echobound .cl-badge,
+.cl-echobound [data-localization-key="developmentMode"],
+.cl-echobound .cl-cardBox > .cl-internal-1d02rmu,
+.cl-echobound .cl-footerPages,
+.cl-rootBox .cl-cardBox + div {
+  display: none !important;
+}
+
+/* Hide "Secured by Clerk" row but keep Sign up link */
+.cl-echobound .cl-footer > div:not(.cl-footerAction):not([class*="footerAction"]) {
+  display: none !important;
+}
+
+.cl-echobound .cl-dividerText,
+.cl-echobound .cl-formFieldLabel,
+.cl-echobound .cl-footerActionText,
+.cl-echobound .cl-footerActionLink,
+.cl-echobound span.cl-dividerText {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.cl-echobound .cl-dividerText {
+  color: #9db0c7 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.cl-echobound .cl-formFieldLabel {
+  color: #c5d4e6 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 0.45rem !important;
+}
+
+.cl-echobound .cl-input,
+.cl-echobound .cl-formFieldInput,
+.cl-echobound input.cl-input {
+  display: block !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box !important;
+  background-color: #07111f !important;
+  color: #f2f8ff !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 999px !important;
+  min-height: 2.75rem !important;
+  padding: 0 1.15rem !important;
+  font-size: 0.95rem !important;
+  box-shadow: none !important;
+}
+
+.cl-echobound .cl-input::placeholder,
+.cl-echobound input::placeholder {
+  color: #7f93ab !important;
+  font-size: 0.95rem !important;
+  opacity: 1 !important;
+}
+
+.cl-echobound .cl-input:focus,
+.cl-echobound .cl-formFieldInput:focus {
+  border-color: rgba(85, 230, 255, 0.65) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(85, 230, 255, 0.18) !important;
+}
+
+.cl-echobound .cl-socialButtonsBlockButton {
+  display: flex !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box !important;
+  background-color: #07111f !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #f2f8ff !important;
+  border-radius: 999px !important;
+  min-height: 2.75rem !important;
+}
+
+.cl-echobound .cl-socialButtonsBlockButtonText {
+  color: #f2f8ff !important;
+  font-size: 0.95rem !important;
+}
+
+.cl-echobound .cl-formButtonPrimary {
+  display: flex !important;
+  width: 168px !important;
+  min-width: 168px !important;
+  max-width: 168px !important;
+  margin: 0.35rem auto 0 !important;
+  background-color: #55e6ff !important;
+  color: #07111f !important;
+  border-radius: 999px !important;
+  min-height: 2.6rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 0 28px rgba(85, 230, 255, 0.35) !important;
+}
+
+.cl-echobound .cl-formButtonPrimary:hover {
+  background-color: #9af3ff !important;
+}
+
+.cl-echobound .cl-footerActionLink {
+  color: #55e6ff !important;
+  background: transparent !important;
+  font-size: 0.95rem !important;
+}
+
+.cl-echobound .cl-footerActionText {
+  color: #9db0c7 !important;
+  font-size: 0.95rem !important;
+}
+
+.cl-echobound .cl-dividerLine {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.cl-echobound .cl-footer {
+  background: transparent !important;
+}
+
+.cl-echobound a {
+  background: transparent !important;
+}
+
+/* Catch-all: any leftover Clerk outer frame */
+.cl-echobound [class*="cl-cardBox"],
+.cl-echobound [class*="cl-card "] {
+  box-shadow: none !important;
 }
