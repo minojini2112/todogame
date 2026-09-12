@@ -11,10 +11,10 @@ export const SPIRITS: {
 }[] = [
   {
     id: "eagle",
-    name: "Eagle",
+    name: "Aerin",
     trait: "Focus",
     watches: "Deep, undivided work. Choosing one thing and staying with it.",
-    image: "/assests/spirit_eagle.png",
+    image: "/assets/prologue/spirit/spirit_flyingfront.png",
   },
   {
     id: "deer",

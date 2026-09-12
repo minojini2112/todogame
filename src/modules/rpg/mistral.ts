@@ -237,7 +237,7 @@ function pickSpirit(signals: Record<string, unknown>): SpiritJudgment["speaker"]
 function lineFor(speaker: SpiritJudgment["speaker"]) {
   if (speaker === "wolf") return "Lupen saw you arrive before the hour closed. Speed with care is still a kind of honor.";
   if (speaker === "phoenix") return "Pyra saw you stand up again. The world forgets second tries. We do not.";
-  if (speaker === "eagle") return "The Eagle marked the still point in your mind. One path. No scatter.";
+  if (speaker === "eagle") return "Aerin marked the still point in your mind. One path. No scatter.";
   return "Sylva noticed the quiet care in this. Not every kindness is loud.";
 }
 

@@ -14,7 +14,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type SanctumFrameProps = {
   profile: RpgProfile;
-  current: "board" | "vault";
+  current: "board" | "vault" | "city";
   children: ReactNode;
   onGuide?: () => void;
 };
@@ -116,7 +116,7 @@ export function SanctumFrame({ profile, current, children, onGuide }: SanctumFra
               <NavLink href="/vault" active={current === "vault"}>
                 Vault
               </NavLink>
-              <NavLink href="/city" active={false}>
+              <NavLink href="/city" active={current === "city"}>
                 Map
               </NavLink>
               <SignOutButton />

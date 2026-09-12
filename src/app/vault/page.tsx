@@ -5,7 +5,7 @@ import { VaultView } from "@/modules/rpg/components/VaultView";
 
 export const metadata: Metadata = {
   title: "Vault",
-  description: "Spirit cards fill from the efforts nobody else sees.",
+  description: "Companion cards fill from the efforts nobody else sees.",
 };
 
 export default async function VaultPage() {
@@ -13,11 +13,14 @@ export default async function VaultPage() {
 
   return (
     <SanctumFrame profile={state.profile} current="vault">
-      <div className="sanctum-panel mx-auto max-w-5xl rounded-2xl p-5 sm:p-8">
-        <p className="text-xs text-[var(--sanctum-gold)]">Spirits</p>
-        <h1 className="font-splash mt-1 text-3xl">Vault</h1>
+      <div className="sanctum-panel sanctum-panel-glow mx-auto max-w-5xl rounded-[32px] border border-[rgba(232,196,140,0.28)] p-5 sm:p-8">
+        <p className="font-display text-[10px] tracking-[0.28em] text-[var(--sanctum-gold)] uppercase">
+          Companions
+        </p>
+        <h1 className="font-splash mt-1 text-3xl text-[var(--sanctum-ink)]">Spirit Vault</h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--sanctum-muted)]">
-          Four cards. They fill only when your work matches who they are.
+          Four companions watch how you work. Open a card to see what they’ve noticed — they fill
+          when your quests match who they are.
         </p>
         <div className="mt-8">
           <VaultView spirits={state.spirits} stories={state.stories} />

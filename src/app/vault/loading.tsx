@@ -1,9 +1,5 @@
-import { BootLoader } from "@/components/intro/BootLoader";
+import { SanctumPageSkeleton } from "@/components/skeletons/PageSkeletons";
 
 export default function VaultLoading() {
-  return (
-    <div className="flex h-dvh items-center justify-center">
-      <BootLoader />
-    </div>
-  );
+  return <SanctumPageSkeleton variant="vault" />;
 }

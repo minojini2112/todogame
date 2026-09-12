@@ -1,9 +1,4 @@
-import { BootLoader } from "@/components/intro/BootLoader";
-
+/** Avoid full-screen boot splash on soft navigations; routes use their own skeletons. */
 export default function Loading() {
-  return (
-    <div className="flex h-dvh items-center justify-center bg-[#071018]">
-      <BootLoader />
-    </div>
-  );
+  return null;
 }

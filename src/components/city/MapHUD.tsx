@@ -1,13 +1,16 @@
 "use client";
 
+import type { ReactNode } from "react";
+import Link from "next/link";
 import { Minus, Plus, RotateCcw } from "lucide-react";
 import { TOWERS } from "@/lib/city/towers";
 import { SPIRIT_UNLOCK } from "@/modules/rpg/spirits";
 import type { RpgLeaderRow, RpgSpiritProgress } from "@/modules/rpg/types";
 import { useCityMapStore } from "@/store/cityMapStore";
-import { EchoBondMenu } from "@/components/city/EchoBondMenu";
 import { CityStoryLine } from "@/components/city/CityStoryLine";
 import { CityLeaderStream } from "@/components/city/CityLeaderStream";
+import { SignOutButton } from "@/modules/rpg/components/SignOutButton";
+import { cn } from "@/lib/utils";
 
 export default function MapHUD({
   spirits,
@@ -32,8 +35,8 @@ export default function MapHUD({
 
   return (
     <>
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-40 flex items-start justify-between gap-3 p-4 sm:p-5">
-        <div className="pointer-events-auto rounded-2xl border border-white/10 bg-void/70 px-4 py-3 backdrop-blur-xl">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-40 flex items-start justify-between gap-3 p-4 select-none sm:p-5">
+        <div className="pointer-events-auto rounded-2xl border border-white/10 bg-void/70 px-4 py-3 backdrop-blur-xl select-none">
           <p className="font-display text-[10px] tracking-[0.28em] text-cyan uppercase">
             Spirit stones
           </p>
@@ -48,6 +51,18 @@ export default function MapHUD({
         </div>
 
         <div className="pointer-events-auto flex flex-col items-end gap-2">
+          <nav
+            aria-label="App"
+            className="flex flex-wrap items-center justify-end gap-1 rounded-full border border-white/10 bg-void/70 p-1 backdrop-blur-xl sm:gap-1.5"
+          >
+            <CityNavLink href="/board">Quests</CityNavLink>
+            <CityNavLink href="/vault">Vault</CityNavLink>
+            <CityNavLink href="/city" active>
+              Map
+            </CityNavLink>
+            <SignOutButton tone="city" />
+          </nav>
+
           <div className="flex overflow-hidden rounded-full border border-white/10 bg-void/70 backdrop-blur-xl">
             <button
               type="button"
@@ -83,7 +98,31 @@ export default function MapHUD({
 
       <CityLeaderStream rows={leaderboard} youId={youId} />
       <CityStoryLine spirits={spirits} recovered={recovered} />
-      <EchoBondMenu />
     </>
+  );
+}
+
+function CityNavLink({
+  href,
+  active = false,
+  children,
+}: {
+  href: string;
+  active?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "rounded-full px-3.5 py-1.5 font-display text-[11px] tracking-[0.16em] uppercase transition sm:px-4",
+        active
+          ? "bg-heartlight/15 text-heartlight shadow-[0_0_16px_rgba(85,230,255,0.2)]"
+          : "text-muted hover:bg-white/5 hover:text-text",
+      )}
+    >
+      {children}
+    </Link>
   );
 }

@@ -20,10 +20,10 @@ const AERIN = {
 };
 
 const SPIRIT_LINES: Record<string, string[]> = {
+  Aerin: ["One focus. No scatter.", "Hold the still point.", "I’m with you on this path."],
   Lupen: ["Swift and sure. Keep finishing early.", "The hour bends for the ready."],
   Sylva: ["Gentleness is still strength.", "Rest is part of the path."],
   Pyra: ["Rise again. That’s the gift.", "Even late light still counts."],
-  Eagle: ["One focus. No scatter.", "Hold the still point."],
 };
 
 type LeadingCompanionProps = {

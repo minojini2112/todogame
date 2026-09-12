@@ -17,11 +17,13 @@ import TowerMarker from "./TowerMarker";
 import MapHUD from "./MapHUD";
 import CityArrival from "./CityArrival";
 
-/** Single city image — no tiled copies. */
+/** Single city map plane — video (or still) scaled with pan/zoom. */
 const MAP_W = 2400;
 const MAP_H = 1600;
 const MAX_ZOOM = 2.6;
 const PREFERRED_ZOOM = 0.84;
+const MAP_VIDEO = "/assets/citymap_video.mp4";
+const MAP_STILL = "/aurelia/home-city.png";
 
 function coverZoom(viewW: number, viewH: number) {
   return Math.max(viewW / MAP_W, viewH / MAP_H);
@@ -67,6 +69,7 @@ export default function CityMap({
 }) {
   const reduceMotion = useReducedMotion();
   const viewportRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const dragRef = useRef<{
     active: boolean;
     pointerId: number | null;
@@ -150,6 +153,38 @@ export default function CityMap({
     return () => window.removeEventListener("resize", onResize);
   }, [applyPan, panX, panY, setZoom, zoom]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || reduceMotion) return;
+    video.muted = true;
+    const play = () => {
+      void video.play().catch(() => {
+        /* autoplay can be blocked; muted + playsInline usually ok */
+      });
+    };
+    play();
+    video.addEventListener("canplay", play);
+    return () => video.removeEventListener("canplay", play);
+  }, [reduceMotion]);
+
+  useEffect(() => {
+    const root = viewportRef.current?.parentElement;
+    const viewport = viewportRef.current;
+    if (!root || !viewport) return;
+
+    const blockSelect = (event: Event) => event.preventDefault();
+    const blockDrag = (event: Event) => event.preventDefault();
+
+    root.addEventListener("selectstart", blockSelect);
+    viewport.addEventListener("selectstart", blockSelect);
+    root.addEventListener("dragstart", blockDrag);
+    return () => {
+      root.removeEventListener("selectstart", blockSelect);
+      viewport.removeEventListener("selectstart", blockSelect);
+      root.removeEventListener("dragstart", blockDrag);
+    };
+  }, []);
+
   const onWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
     event.preventDefault();
     const viewport = viewportRef.current;
@@ -164,6 +199,7 @@ export default function CityMap({
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
+    window.getSelection()?.removeAllRanges();
     dragRef.current = {
       active: true,
       pointerId: event.pointerId,
@@ -198,11 +234,15 @@ export default function CityMap({
     }
   };
 
+  const mapTone = recovered
+    ? "brightness-110 saturate-125"
+    : "brightness-[0.88] saturate-[0.85]";
+
   return (
-    <div className="relative h-dvh min-h-[640px] w-full overflow-hidden bg-[#0a1624]">
+    <div className="relative h-dvh min-h-[640px] w-full overflow-hidden bg-[#0a1624] select-none [-webkit-user-drag:none] [-webkit-touch-callout:none]">
       <div
         ref={viewportRef}
-        className="absolute inset-0 touch-none cursor-grab active:cursor-grabbing"
+        className="absolute inset-0 cursor-grab touch-none select-none active:cursor-grabbing"
         onWheel={onWheel}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -216,7 +256,7 @@ export default function CityMap({
         aria-label="Aurelia map. The four spirits are stones. Wake them all to recover the city."
       >
         <div
-          className="absolute left-0 top-0 origin-top-left will-change-transform"
+          className="absolute top-0 left-0 origin-top-left will-change-transform"
           style={{
             width: MAP_W,
             height: MAP_H,
@@ -225,17 +265,32 @@ export default function CityMap({
           }}
         >
           <div className="relative h-full w-full overflow-hidden">
-            <Image
-              src="/aurelia/home-city.png"
-              alt="Aurelia"
-              fill
-              priority
-              sizes="2400px"
-              className={`object-cover object-center select-none transition duration-700 ${
-                recovered ? "brightness-110 saturate-125" : "brightness-[0.55] saturate-50"
-              }`}
-              draggable={false}
-            />
+            {reduceMotion ? (
+              <Image
+                src={MAP_STILL}
+                alt="Aurelia"
+                fill
+                priority
+                sizes="2400px"
+                className={`object-cover object-center select-none transition duration-700 ${mapTone}`}
+                draggable={false}
+              />
+            ) : (
+              <video
+                ref={videoRef}
+                className={`pointer-events-none absolute inset-0 h-full w-full object-cover object-center select-none transition duration-700 ${mapTone}`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+                aria-hidden
+                poster={MAP_STILL}
+              >
+                <source src={MAP_VIDEO} type="video/mp4" />
+              </video>
+            )}
 
             {TOWERS.map((tower) => {
               const points = spirits.find((row) => row.spirit_id === tower.spiritId)?.points ?? 0;

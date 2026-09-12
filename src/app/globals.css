@@ -467,8 +467,9 @@
   background: transparent !important;
 }
 
-/* Catch-all: any leftover Clerk outer frame */
+/* Catch-all: any leftover Clerk outer frame.
+   Avoid attribute values that are only/end with a space — cssnano crashes on them. */
 .cl-echobound [class*="cl-cardBox"],
-.cl-echobound [class*="cl-card "] {
+.cl-echobound [class*="cl-card"] {
   box-shadow: none !important;
 }
