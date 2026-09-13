@@ -5,6 +5,9 @@ import { getOptionalUserId } from "@/lib/clerk-auth";
 
 export const metadata: Metadata = {
   title: "Prologue",
+  description:
+    "Begin the EchoBound todo game. Open your eyes in ruined Aurelia and start the Eco Bound journey.",
+  alternates: { canonical: "/intro" },
 };
 
 export default async function IntroPage() {

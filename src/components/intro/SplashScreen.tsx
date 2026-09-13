@@ -113,7 +113,7 @@ function SplashScreenView({
     >
       <Image
         src={splashArt}
-        alt="A traveler sits on a cliff at dawn, looking out over Aurelia. EchoBound: Your Tasks. Your Journey. A Brighter Tomorrow."
+        alt="EchoBound todo game — a traveler on a cliff at dawn above Aurelia. Eco Bound: your tasks, your journey, a brighter tomorrow."
         fill
         preload
         placeholder="blur"
@@ -124,7 +124,7 @@ function SplashScreenView({
         onError={() => setImageReady(true)}
       />
 
-      <h1 className="sr-only">EchoBound</h1>
+      <h1 className="sr-only">EchoBound — todo game and Eco Bound task RPG</h1>
 
       <AnimatePresence>
         {!booting ? (

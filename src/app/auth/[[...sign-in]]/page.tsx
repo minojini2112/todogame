@@ -7,7 +7,7 @@ import { isClerkConfigured } from "@/lib/clerk";
 
 export const metadata = {
   title: "Sign in",
-  description: "Authenticate to enter Aurelia.",
+  description: "Sign in to EchoBound, the Eco Bound todo game, and continue your quests in Aurelia.",
 };
 
 export const dynamic = "force-dynamic";

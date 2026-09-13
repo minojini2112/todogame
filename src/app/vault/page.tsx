@@ -6,6 +6,7 @@ import { VaultView } from "@/modules/rpg/components/VaultView";
 export const metadata: Metadata = {
   title: "Vault",
   description: "Companion cards fill from the efforts nobody else sees.",
+  robots: { index: false, follow: false },
 };
 
 export default async function VaultPage() {

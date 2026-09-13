@@ -5,6 +5,7 @@ import { BoardExperience } from "@/modules/rpg/components/BoardExperience";
 export const metadata: Metadata = {
   title: "Quests",
   description: "Organize paths and groups, add quests, and earn XP as you complete them.",
+  robots: { index: false, follow: false },
 };
 
 export default async function BoardPage() {

@@ -4,6 +4,7 @@ import { loadRpgState } from "@/modules/rpg/actions";
 export const metadata = {
   title: "Aurelia Map — EchoBound",
   description: "Wake the four spirits. When all are collected, the city recovers.",
+  robots: { index: false, follow: false },
 };
 
 export default async function CityPage() {

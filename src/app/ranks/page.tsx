@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "Echo Chorus",
   description: "Who walks brightest among the spirits of Aurelia.",
+  robots: { index: false, follow: false },
 };
 
 export default async function RanksPage() {

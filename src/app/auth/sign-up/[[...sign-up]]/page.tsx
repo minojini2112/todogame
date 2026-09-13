@@ -7,7 +7,7 @@ import { isClerkConfigured } from "@/lib/clerk";
 
 export const metadata = {
   title: "Sign up",
-  description: "Create your EchoBound architect account.",
+  description: "Create a free EchoBound account and start the Eco Bound todo game.",
 };
 
 export const dynamic = "force-dynamic";
