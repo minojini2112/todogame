@@ -2,6 +2,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { usePhoneLayout } from "@/hooks/usePhoneLayout";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type RestoreSceneProps = {
@@ -10,6 +11,7 @@ type RestoreSceneProps = {
 
 export function RestoreScene({ lineIndex = 0 }: RestoreSceneProps) {
   const reduced = useReducedMotion();
+  const phone = usePhoneLayout();
   const restoration = Math.min(100, 12 + lineIndex * 22);
 
   return (
@@ -48,7 +50,7 @@ export function RestoreScene({ lineIndex = 0 }: RestoreSceneProps) {
       <div className="absolute inset-0 bg-[#050A16]/25" />
 
       {/* Left — Aerin */}
-      <div className="absolute left-0 top-[48%] z-10 w-[min(58vw,460px)] -translate-y-1/2 sm:left-2 sm:w-[min(48vw,520px)] lg:left-4">
+      <div className={`absolute left-0 top-[48%] z-10 -translate-y-1/2 ${phone ? "w-[min(28vw,160px)]" : "w-[min(58vw,460px)] sm:left-2 sm:w-[min(48vw,520px)] lg:left-4"}`}>
         <motion.img
           src="/assets/prologue/spirit/aerin-particles.png"
           alt=""
@@ -66,7 +68,7 @@ export function RestoreScene({ lineIndex = 0 }: RestoreSceneProps) {
       </div>
 
       {/* Middle — restoration explanation */}
-      <div className="absolute top-[48%] left-1/2 z-20 w-[min(72vw,280px)] -translate-x-1/2 -translate-y-1/2 sm:w-[min(28vw,300px)]">
+      <div className={`absolute top-[48%] left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 ${phone ? "w-[min(24vw,170px)]" : "w-[min(72vw,280px)] sm:w-[min(28vw,300px)]"}`}>
         <div className="rounded-2xl border border-white/10 bg-[#07111F]/80 p-4 backdrop-blur-xl">
           <p className="font-display text-[10px] tracking-[0.28em] text-heartlight">
             Academy District

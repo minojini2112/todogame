@@ -51,14 +51,17 @@ function readSavedPos(width: number, height: number): Pos | null {
 export function CityLeaderStream({
   rows,
   youId,
+  compact = false,
 }: {
   rows: RpgLeaderRow[];
   youId: string;
+  compact?: boolean;
 }) {
   const reduced = useReducedMotion();
   const [cursor, setCursor] = useState(0);
   const [pos, setPos] = useState<Pos | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLElement>(null);
   const dragRef = useRef<{
     pointerId: number;
@@ -91,6 +94,40 @@ export function CityLeaderStream({
   }, []);
 
   if (rows.length === 0) return null;
+
+  if (compact) {
+    const lead = rows[cursor % rows.length];
+    return (
+      <div className="pointer-events-auto absolute top-[3.25rem] left-[max(0.5rem,env(safe-area-inset-left))] z-40">
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="rounded-full border border-white/15 bg-[#07111f]/90 px-3 py-1.5 font-display text-[10px] tracking-[0.16em] text-heartlight uppercase backdrop-blur-xl"
+        >
+          Chorus
+        </button>
+        {open && lead ? (
+          <div className="mt-2 w-[min(70vw,220px)] rounded-2xl border border-heartlight/25 bg-[#07111f]/95 p-3 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-splash text-base text-text">Echo Chorus</p>
+              <Link
+                href="/ranks"
+                className="font-display text-[9px] tracking-[0.14em] text-muted uppercase"
+              >
+                All →
+              </Link>
+            </div>
+            <p className="mt-2 truncate text-sm text-text">
+              #{lead.rank} {lead.name}
+            </p>
+            <p className="mt-0.5 text-[11px] text-muted">
+              {lead.cards}/4 spirits · {lead.points} echo
+            </p>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
 
   const visible = [0, 1, 2]
     .map((offset) => rows[(cursor + offset) % rows.length])

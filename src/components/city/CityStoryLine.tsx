@@ -105,13 +105,41 @@ function shuffleHints(spirits: RpgSpiritProgress[], recovered: boolean): Hint[] 
 export function CityStoryLine({
   spirits,
   recovered,
+  compact = false,
 }: {
   spirits: RpgSpiritProgress[];
   recovered: boolean;
+  compact?: boolean;
 }) {
   const lines = useMemo(() => shuffleHints(spirits, recovered), [spirits, recovered]);
   const [index, setIndex] = useState(0);
   const hint = lines[index] ?? HINTS[0];
+
+  if (compact) {
+    return (
+      <aside className="pointer-events-none absolute inset-x-0 bottom-0 z-40 select-none">
+        <div className="flex items-end gap-2 bg-[linear-gradient(180deg,transparent,rgba(4,6,10,0.88)_40%)] px-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] pt-6">
+          <div className="pointer-events-auto min-w-0 flex-1 rounded-2xl border border-white/10 bg-[rgba(8,12,18,0.94)] px-3 py-1.5">
+            <p className="text-[9px] tracking-[0.2em] text-white/45 uppercase">{hint.speaker}</p>
+            <p className="truncate text-[12px] leading-4 text-white/90">{hint.line}</p>
+          </div>
+          <Link
+            href="/board"
+            className="pointer-events-auto shrink-0 rounded-full bg-[#ffc857] px-3 py-2 text-[10px] tracking-[0.16em] text-[#07111f] uppercase"
+          >
+            Tasks
+          </Link>
+          <button
+            type="button"
+            onClick={() => setIndex((current) => (current + 1) % lines.length)}
+            className="pointer-events-auto shrink-0 rounded-full border border-white/15 bg-[rgba(8,12,18,0.94)] px-3 py-2 text-[10px] tracking-[0.16em] text-white/80 uppercase"
+          >
+            Next
+          </button>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="pointer-events-none absolute inset-x-0 bottom-0 z-40 select-none">

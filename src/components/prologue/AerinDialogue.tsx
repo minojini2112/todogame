@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { usePhoneLayout } from "@/hooks/usePhoneLayout";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type AerinDialogueProps = {
@@ -19,6 +20,8 @@ export function AerinDialogue({
   compact = false,
 }: AerinDialogueProps) {
   const reduced = useReducedMotion();
+  const phone = usePhoneLayout();
+  const mobileTeach = phone && compact;
 
   return (
     <motion.div
@@ -27,16 +30,20 @@ export function AerinDialogue({
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: reduced ? 0.15 : 0.4, ease: "easeOut" }}
       className={
-        compact
-          ? "pointer-events-none absolute inset-y-0 left-[calc(50%+10.5rem)] z-40 flex items-center pr-3 sm:left-[calc(50%+11.5rem)] sm:pr-4"
-          : "pointer-events-none absolute inset-y-0 right-0 z-40 flex items-center px-4 sm:px-6 lg:pr-12"
+        mobileTeach
+          ? "pointer-events-none absolute inset-y-0 right-0 z-50 flex items-center pr-[max(0.4rem,env(safe-area-inset-right))]"
+          : compact
+            ? "pointer-events-none absolute inset-y-0 left-[calc(50%+10.5rem)] z-40 flex items-center pr-3 sm:left-[calc(50%+11.5rem)] sm:pr-4"
+            : "pointer-events-none absolute inset-y-0 right-0 z-40 flex items-center px-4 sm:px-6 lg:pr-12"
       }
     >
       <div
         className={
-          compact
-            ? "pointer-events-auto relative w-[min(42vw,300px)]"
-            : "pointer-events-auto relative w-[min(88vw,340px)]"
+          mobileTeach
+            ? "pointer-events-auto relative w-[min(36vw,230px)]"
+            : compact
+              ? "pointer-events-auto relative w-[min(42vw,300px)]"
+              : "pointer-events-auto relative w-[min(88vw,340px)]"
         }
       >
         {!reduced ? (
@@ -47,22 +54,36 @@ export function AerinDialogue({
           </>
         ) : null}
 
-        <div className="relative overflow-hidden rounded-2xl border border-heartlight/45 bg-[linear-gradient(160deg,rgba(13,28,45,0.94),rgba(7,17,31,0.9))] px-5 py-4 shadow-[0_0_40px_rgba(85,230,255,0.22),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
+        <div
+          className={
+            mobileTeach
+              ? "relative overflow-hidden rounded-xl border border-heartlight/45 bg-[linear-gradient(160deg,rgba(13,28,45,0.94),rgba(7,17,31,0.9))] px-3 py-2.5 shadow-[0_0_40px_rgba(85,230,255,0.22),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl"
+              : "relative overflow-hidden rounded-2xl border border-heartlight/45 bg-[linear-gradient(160deg,rgba(13,28,45,0.94),rgba(7,17,31,0.9))] px-5 py-4 shadow-[0_0_40px_rgba(85,230,255,0.22),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl"
+          }
+        >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(85,230,255,0.18),transparent_55%)]" />
           <p className="relative font-display text-[10px] tracking-[0.3em] text-heartlight uppercase">
             Aerin
           </p>
           <p
-            className="relative mt-2 font-splash text-base leading-relaxed text-[#F2F8FF] sm:text-lg"
+            className={
+              mobileTeach
+                ? "relative mt-1.5 font-splash text-[13px] leading-5 text-[#F2F8FF]"
+                : "relative mt-2 font-splash text-base leading-relaxed text-[#F2F8FF] sm:text-lg"
+            }
             aria-live="polite"
           >
             {text}
           </p>
-          <div className="relative mt-4 flex justify-end">
+          <div className={mobileTeach ? "relative mt-2.5 flex justify-end" : "relative mt-4 flex justify-end"}>
             <button
               type="button"
               onClick={onNext}
-              className="inline-flex items-center justify-center rounded-full border border-heartlight/50 bg-heartlight/10 px-5 py-2.5 font-display text-[11px] font-semibold tracking-[0.2em] text-white uppercase transition hover:bg-heartlight/20 focus-visible:outline-offset-4"
+              className={
+                mobileTeach
+                  ? "inline-flex items-center justify-center rounded-full border border-heartlight/50 bg-heartlight/10 px-3.5 py-1.5 font-display text-[10px] font-semibold tracking-[0.16em] text-white uppercase"
+                  : "inline-flex items-center justify-center rounded-full border border-heartlight/50 bg-heartlight/10 px-5 py-2.5 font-display text-[11px] font-semibold tracking-[0.2em] text-white uppercase transition hover:bg-heartlight/20 focus-visible:outline-offset-4"
+              }
             >
               {nextLabel}
             </button>

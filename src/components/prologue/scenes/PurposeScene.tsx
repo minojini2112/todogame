@@ -2,11 +2,13 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { usePhoneLayout } from "@/hooks/usePhoneLayout";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /** Aerin + sunrise for the emotional purpose beat. */
 export function PurposeScene() {
   const reduced = useReducedMotion();
+  const phone = usePhoneLayout();
 
   return (
     <motion.div
@@ -35,7 +37,7 @@ export function PurposeScene() {
       <div className="absolute inset-0 bg-gradient-to-t from-[#030811]/80 via-transparent to-[#030811]/30" />
 
       {/* Left — Aerin */}
-      <div className="absolute left-0 top-[48%] z-10 w-[min(58vw,460px)] -translate-y-1/2 sm:left-2 sm:w-[min(48vw,520px)] lg:left-4">
+      <div className={`absolute left-0 top-[48%] z-10 -translate-y-1/2 ${phone ? "w-[min(28vw,160px)]" : "w-[min(58vw,460px)] sm:left-2 sm:w-[min(48vw,520px)] lg:left-4"}`}>
         <motion.img
           src="/assets/prologue/spirit/aerin-particles.png"
           alt=""
@@ -53,7 +55,7 @@ export function PurposeScene() {
       </div>
 
       {/* Middle — path explanation */}
-      <div className="absolute top-[48%] left-1/2 z-20 w-[min(72vw,280px)] -translate-x-1/2 -translate-y-1/2 sm:w-[min(28vw,300px)]">
+      <div className={`absolute top-[48%] left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 ${phone ? "w-[min(24vw,170px)]" : "w-[min(72vw,280px)] sm:w-[min(28vw,300px)]"}`}>
         <div className="rounded-2xl border border-heartlight/30 bg-[#0D1C2D]/90 p-4 shadow-[0_0_40px_rgba(85,230,255,0.12)] backdrop-blur-xl">
           <p className="font-display text-[10px] tracking-[0.28em] text-heartlight">
             Your Path
