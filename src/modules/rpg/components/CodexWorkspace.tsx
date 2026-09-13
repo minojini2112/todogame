@@ -30,6 +30,7 @@ import { RepeatFields } from "@/modules/rpg/components/RepeatFields";
 import { LevelBurst } from "@/modules/rpg/components/LevelBurst";
 import { SpiritWhisper } from "@/modules/rpg/components/SpiritWhisper";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { playSfx } from "@/lib/sfx";
 import type { CompleteQuestResult, RpgGroup, RpgList, RpgQuest, RpgSpiritWhisper } from "@/modules/rpg/types";
 
 type CodexWorkspaceProps = {
@@ -113,6 +114,7 @@ export function CodexWorkspace({ lists, groups, quests }: CodexWorkspaceProps) {
         setError(result.message ?? "Could not complete this quest.");
         return;
       }
+      playSfx("completed");
       if (result.data) setReward(result.data);
       if (result.data?.whisper) setLiveWhisper(result.data.whisper);
     });
@@ -539,13 +541,22 @@ function TaskComposerModal({
   const reduced = useReducedMotion();
   const titleRef = useRef<HTMLInputElement>(null);
   const [state, action, pending] = useActionState(createQuestAction, { ok: false } satisfies ActionState);
+  const celebrated = useRef(false);
 
   useEffect(() => {
     titleRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    if (!pending && state.ok) onClose();
+    if (pending) {
+      celebrated.current = false;
+      return;
+    }
+    if (state.ok && !celebrated.current) {
+      celebrated.current = true;
+      playSfx("added");
+      onClose();
+    }
   }, [pending, state.ok, onClose]);
 
   useEffect(() => {

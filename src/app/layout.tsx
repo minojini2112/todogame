@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Cinzel, Manrope, Oxanium } from "next/font/google";
 import { clerkAppearance } from "@/lib/clerk-appearance";
 import { getClerkPublishableKey } from "@/lib/clerk";
+import { SfxProvider } from "@/components/SfxProvider";
 import "./globals.css";
 
 const oxanium = Oxanium({
@@ -67,6 +68,7 @@ export default function RootLayout({
       className={`${oxanium.variable} ${manrope.variable} ${cinzel.variable} h-full antialiased`}
     >
       <body className={`${manrope.className} flex min-h-full flex-col font-sans antialiased`}>
+        <SfxProvider />
         {app}
       </body>
     </html>

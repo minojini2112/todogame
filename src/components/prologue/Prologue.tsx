@@ -63,7 +63,10 @@ export default function Prologue() {
 
   if (!assetsReady) {
     return (
-      <main className="relative h-dvh w-full overflow-hidden bg-[#07111F]">
+      <main
+        data-sfx="off"
+        className="relative h-dvh w-full overflow-hidden bg-[#07111F]"
+      >
         <div className="absolute inset-0 flex items-center justify-center">
           <BootLoader progress={progress} />
         </div>
@@ -184,7 +187,10 @@ function ProloguePlayback() {
   }, []);
 
   return (
-    <main className="relative h-dvh w-full overflow-hidden bg-[#07111F]">
+    <main
+      data-sfx="off"
+      className="relative h-dvh w-full overflow-hidden bg-[#07111F]"
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={scene.id}

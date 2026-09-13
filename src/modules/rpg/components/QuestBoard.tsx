@@ -6,6 +6,7 @@ import { completeQuestAction, deleteQuestAction } from "@/modules/rpg/actions";
 import { QuestComposer } from "@/modules/rpg/components/QuestComposer";
 import { QuestTile } from "@/modules/rpg/components/QuestTile";
 import { LevelBurst } from "@/modules/rpg/components/LevelBurst";
+import { playSfx } from "@/lib/sfx";
 import type { CompleteQuestResult, RpgQuest } from "@/modules/rpg/types";
 
 type QuestBoardProps = {
@@ -43,6 +44,7 @@ export function QuestBoard({ quests }: QuestBoardProps) {
         setError(result.message ?? "The city rejected the offering.");
         return;
       }
+      playSfx("completed");
       if (result.data) {
         setReward(result.data);
       }

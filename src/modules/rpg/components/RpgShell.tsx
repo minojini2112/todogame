@@ -61,6 +61,7 @@ function NavChip({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
+      data-sfx="click"
       className={
         active
           ? "rounded-full bg-heartlight px-4 py-2 font-display text-xs tracking-[0.16em] text-void uppercase"

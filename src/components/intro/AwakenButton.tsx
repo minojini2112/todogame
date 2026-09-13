@@ -133,6 +133,7 @@ export function AwakenButton({
         <Link
           href={href}
           onClick={handleClick}
+          data-sfx="click"
           className={cn(
             "group relative inline-flex min-h-14 items-center justify-center overflow-hidden rounded-full px-10 py-4 sm:min-h-16 sm:px-12",
             "border border-[#ffe7a3] bg-[#ffc857] text-[#07111f]",

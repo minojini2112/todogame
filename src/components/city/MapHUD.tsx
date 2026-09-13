@@ -115,6 +115,7 @@ function CityNavLink({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
+      data-sfx="click"
       className={cn(
         "rounded-full px-3.5 py-1.5 font-display text-[11px] tracking-[0.16em] uppercase transition sm:px-4",
         active

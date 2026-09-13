@@ -11,6 +11,7 @@ import {
 } from "@/modules/rpg/catalog";
 import { createQuestAction, type ActionState } from "@/modules/rpg/actions";
 import { Field, fieldControlClass } from "@/modules/rpg/components/Field";
+import { playSfx } from "@/lib/sfx";
 import type { QuestDifficulty } from "@/types/game";
 
 const initial: ActionState = { ok: false };
@@ -19,10 +20,17 @@ export function QuestComposer() {
   const [state, action, pending] = useActionState(createQuestAction, initial);
   const [difficulty, setDifficulty] = useState<QuestDifficulty>("ranger");
   const formRef = useRef<HTMLFormElement>(null);
+  const celebrated = useRef(false);
   const payout = DIFFICULTY_PAYOUT[difficulty];
 
   useEffect(() => {
-    if (!pending && state.ok) {
+    if (pending) {
+      celebrated.current = false;
+      return;
+    }
+    if (state.ok && !celebrated.current) {
+      celebrated.current = true;
+      playSfx("added");
       formRef.current?.reset();
       setDifficulty("ranger");
     }

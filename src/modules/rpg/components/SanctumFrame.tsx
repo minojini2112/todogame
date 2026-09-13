@@ -231,6 +231,7 @@ function NavLink({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
+      data-sfx="click"
       className={
         active
           ? "rounded-full bg-[var(--sanctum-gold)] px-3.5 py-1.5 font-display text-xs tracking-[0.14em] text-[#1a1208] uppercase shadow-[0_0_22px_rgba(228,180,92,0.35)] transition hover:brightness-110"

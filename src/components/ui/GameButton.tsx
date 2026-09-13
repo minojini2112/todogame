@@ -32,6 +32,7 @@ type GameButtonProps = {
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   onClick?: () => void;
+  sfx?: "click" | "off";
 };
 
 export const GameButton = forwardRef<HTMLButtonElement, GameButtonProps>(
@@ -45,14 +46,16 @@ export const GameButton = forwardRef<HTMLButtonElement, GameButtonProps>(
       type = "button",
       disabled,
       onClick,
+      sfx,
     },
     ref,
   ) {
     const classes = cn(baseClass, variantClass[variant], sizeClass[size], className);
+    const sfxAttr = sfx ?? (href ? "click" : undefined);
 
     if (href) {
       return (
-        <Link href={href} className={classes}>
+        <Link href={href} className={classes} data-sfx={sfxAttr}>
           {children}
         </Link>
       );
@@ -65,6 +68,7 @@ export const GameButton = forwardRef<HTMLButtonElement, GameButtonProps>(
         disabled={disabled}
         onClick={onClick}
         className={classes}
+        data-sfx={sfxAttr}
       >
         {children}
       </button>
