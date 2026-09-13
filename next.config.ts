@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 90],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/sitemap.xml/google290f9bf21722584f.html",
+        destination: "/google290f9bf21722584f.html",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

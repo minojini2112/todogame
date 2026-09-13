@@ -115,7 +115,7 @@ export function CityStoryLine({
 
   return (
     <aside className="pointer-events-none absolute inset-x-0 bottom-0 z-40 select-none">
-      <div className="bg-[linear-gradient(180deg,transparent,rgba(4,6,10,0.72)_36%,rgba(4,6,10,0.92))] px-4 pt-8 pb-3 sm:px-8 sm:pb-4">
+      <div className="map-story bg-[linear-gradient(180deg,transparent,rgba(4,6,10,0.72)_36%,rgba(4,6,10,0.92))] px-4 pt-8 pb-3 sm:px-8 sm:pb-4">
         <div className="pointer-events-auto mx-auto flex max-w-3xl items-center gap-3">
           <div className="min-w-0 flex-1 rounded-full border border-white/10 bg-[rgba(8,12,18,0.94)] px-5 py-2.5 select-none">
             <p className="text-[10px] tracking-[0.28em] text-white/45 uppercase">{hint.speaker}</p>

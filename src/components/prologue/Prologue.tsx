@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BootLoader } from "@/components/intro/BootLoader";
+import { MobileLandscapeShell } from "@/components/layout/MobileLandscapeShell";
 import { AerinDialogue } from "@/components/prologue/AerinDialogue";
 import { Dialogue } from "@/components/prologue/Dialogue";
 import { ArrivalScene } from "@/components/prologue/scenes/ArrivalScene";
@@ -32,6 +33,7 @@ import {
 import { PROLOGUE_SCENES } from "@/lib/prologue/script";
 
 export default function Prologue() {
+  const router = useRouter();
   const [assetsReady, setAssetsReady] = useState(false);
   const [progress, setProgress] = useState(8);
 
@@ -61,20 +63,38 @@ export default function Prologue() {
     };
   }, []);
 
-  if (!assetsReady) {
-    return (
-      <main
-        data-sfx="off"
-        className="relative h-dvh w-full overflow-hidden bg-[#07111F]"
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <BootLoader progress={progress} />
-        </div>
-      </main>
-    );
-  }
+  const stage = !assetsReady ? (
+    <main
+      data-sfx="off"
+      className="relative h-full w-full overflow-hidden bg-[#07111F]"
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        <BootLoader progress={progress} />
+      </div>
+    </main>
+  ) : (
+    <ProloguePlayback />
+  );
 
-  return <ProloguePlayback />;
+  return (
+    <MobileLandscapeShell
+      hint="Turn your phone sideways to watch the prologue"
+      overlayAction={
+        <button
+          type="button"
+          onClick={() => {
+            stopPrologueMusic();
+            router.push("/auth");
+          }}
+          className="rounded-full border border-white/20 bg-black/30 px-5 py-2.5 text-xs tracking-[0.16em] text-white uppercase"
+        >
+          Skip Intro
+        </button>
+      }
+    >
+      {stage}
+    </MobileLandscapeShell>
+  );
 }
 
 function ProloguePlayback() {
@@ -189,7 +209,7 @@ function ProloguePlayback() {
   return (
     <main
       data-sfx="off"
-      className="relative h-dvh w-full overflow-hidden bg-[#07111F]"
+      className="relative h-full w-full overflow-hidden bg-[#07111F]"
     >
       <AnimatePresence mode="wait">
         <motion.div

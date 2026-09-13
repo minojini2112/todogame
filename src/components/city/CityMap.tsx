@@ -13,6 +13,7 @@ import { TOWERS } from "@/lib/city/towers";
 import { SPIRIT_UNLOCK } from "@/modules/rpg/spirits";
 import type { RpgLeaderRow, RpgSpiritProgress } from "@/modules/rpg/types";
 import { useCityMapStore } from "@/store/cityMapStore";
+import { MobileLandscapeShell } from "@/components/layout/MobileLandscapeShell";
 import TowerMarker from "./TowerMarker";
 import MapHUD from "./MapHUD";
 import CityArrival from "./CityArrival";
@@ -239,7 +240,11 @@ export default function CityMap({
     : "brightness-[0.88] saturate-[0.85]";
 
   return (
-    <div className="relative h-dvh min-h-[640px] w-full overflow-hidden bg-[#0a1624] select-none [-webkit-user-drag:none] [-webkit-touch-callout:none]">
+    <MobileLandscapeShell
+      className="bg-[#0a1624]"
+      hint="Turn your phone sideways to explore Aurelia"
+    >
+    <div className="city-map-root relative h-full min-h-[640px] w-full overflow-hidden bg-[#0a1624] select-none [@media(hover:none)_and_(pointer:coarse)]:min-h-0 [-webkit-user-drag:none] [-webkit-touch-callout:none]">
       <div
         ref={viewportRef}
         className="absolute inset-0 cursor-grab touch-none select-none active:cursor-grabbing"
@@ -332,5 +337,6 @@ export default function CityMap({
       />
       <CityArrival />
     </div>
+    </MobileLandscapeShell>
   );
 }

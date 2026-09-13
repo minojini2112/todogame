@@ -35,7 +35,7 @@ export default function MapHUD({
 
   return (
     <>
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-40 flex items-start justify-between gap-3 p-4 select-none sm:p-5">
+      <div className="map-hud-top pointer-events-none absolute inset-x-0 top-0 z-40 flex items-start justify-between gap-3 p-4 select-none sm:p-5">
         <div className="pointer-events-auto rounded-2xl border border-white/10 bg-void/70 px-4 py-3 backdrop-blur-xl select-none">
           <p className="font-display text-[10px] tracking-[0.28em] text-cyan uppercase">
             Spirit stones
@@ -43,7 +43,7 @@ export default function MapHUD({
           <p className="mt-1 font-display text-sm tracking-wide text-text">
             {awakeCount} / {TOWERS.length} awake
           </p>
-          <p className="mt-1 max-w-[220px] text-xs leading-5 text-muted">
+          <p className="map-hud-blurb mt-1 max-w-[220px] text-xs leading-5 text-muted">
             {recovered
               ? "All four are awake. Aurelia is recovering."
               : "These are not a path. Wake each spirit. When all are collected, the city returns."}

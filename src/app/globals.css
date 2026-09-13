@@ -473,3 +473,30 @@
 .cl-echobound [class*="cl-card"] {
   box-shadow: none !important;
 }
+
+/* Phone-only: prologue + map use a real landscape frame. Laptops never match. */
+@media (hover: none) and (pointer: coarse) {
+  html.mobile-landscape-page,
+  html.mobile-landscape-page body {
+    overflow: hidden;
+  }
+
+  html.mobile-landscape-page .city-map-root {
+    min-height: 0;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 560px) {
+  html.mobile-landscape-page .map-hud-blurb {
+    display: none;
+  }
+
+  html.mobile-landscape-page .map-hud-top {
+    padding: 0.6rem 0.75rem;
+  }
+
+  html.mobile-landscape-page .map-story {
+    padding-top: 1.25rem;
+    padding-bottom: 0.4rem;
+  }
+}
