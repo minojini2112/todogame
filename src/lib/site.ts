@@ -1,4 +1,5 @@
 const LOCAL_FALLBACK = "http://localhost:3000";
+const PRODUCTION_SITE_URL = "https://todogame-sigma.vercel.app";
 
 function trimUrl(value: string) {
   return value.replace(/\/$/, "");
@@ -17,14 +18,12 @@ export function getSiteUrl() {
     return trimUrl(explicit);
   }
 
-  const production = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
-  if (production) {
-    return withHttps(production);
-  }
-
-  const vercel = process.env.VERCEL_URL?.trim();
-  if (vercel) {
-    return withHttps(vercel);
+  if (process.env.VERCEL) {
+    const production = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+    if (production) {
+      return withHttps(production);
+    }
+    return PRODUCTION_SITE_URL;
   }
 
   return explicit ? trimUrl(explicit) : LOCAL_FALLBACK;
