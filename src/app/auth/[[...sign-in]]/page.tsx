@@ -10,6 +10,8 @@ export const metadata = {
   description: "Authenticate to enter Aurelia.",
 };
 
+export const dynamic = "force-dynamic";
+
 const AFTER_AUTH = "/city";
 
 type AuthPageProps = {

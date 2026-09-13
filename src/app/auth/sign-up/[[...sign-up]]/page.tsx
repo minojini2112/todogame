@@ -10,6 +10,8 @@ export const metadata = {
   description: "Create your EchoBound architect account.",
 };
 
+export const dynamic = "force-dynamic";
+
 const AFTER_AUTH = "/city";
 
 export default async function SignUpPage() {

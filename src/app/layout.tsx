@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Cinzel, Manrope, Oxanium } from "next/font/google";
 import { clerkAppearance } from "@/lib/clerk-appearance";
-import { getClerkPublishableKey, isClerkConfigured } from "@/lib/clerk";
+import { getClerkPublishableKey } from "@/lib/clerk";
 import "./globals.css";
 
 const oxanium = Oxanium({
@@ -36,6 +36,7 @@ export const metadata: Metadata = {
     "A gamified life RPG. Wake in ruined Aurelia, bind with Skyform, and restore the last city through real-world quests.",
 };
 
+/** Must be NEXT_PUBLIC_… — only that is inlined into the client + build for Clerk UI. */
 const publishableKey = getClerkPublishableKey();
 const afterAuthUrl = "/city";
 
@@ -44,29 +45,29 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const app = publishableKey ? (
+    <ClerkProvider
+      appearance={clerkAppearance}
+      publishableKey={publishableKey}
+      signInForceRedirectUrl={afterAuthUrl}
+      signUpForceRedirectUrl={afterAuthUrl}
+      signInFallbackRedirectUrl={afterAuthUrl}
+      signUpFallbackRedirectUrl={afterAuthUrl}
+      afterSignOutUrl="/"
+    >
+      {children}
+    </ClerkProvider>
+  ) : (
+    children
+  );
+
   return (
     <html
       lang="en"
       className={`${oxanium.variable} ${manrope.variable} ${cinzel.variable} h-full antialiased`}
     >
-      <body
-        className={`${manrope.className} flex min-h-full flex-col font-sans antialiased`}
-      >
-        {isClerkConfigured && publishableKey ? (
-          <ClerkProvider
-            appearance={clerkAppearance}
-            publishableKey={publishableKey}
-            signInForceRedirectUrl={afterAuthUrl}
-            signUpForceRedirectUrl={afterAuthUrl}
-            signInFallbackRedirectUrl={afterAuthUrl}
-            signUpFallbackRedirectUrl={afterAuthUrl}
-            afterSignOutUrl="/"
-          >
-            {children}
-          </ClerkProvider>
-        ) : (
-          children
-        )}
+      <body className={`${manrope.className} flex min-h-full flex-col font-sans antialiased`}>
+        {app}
       </body>
     </html>
   );

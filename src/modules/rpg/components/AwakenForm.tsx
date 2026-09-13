@@ -4,10 +4,28 @@ import { SignIn, SignUp } from "@clerk/nextjs";
 import { useState } from "react";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { GlowBadge } from "@/components/ui/GlowBadge";
+import { isClerkConfigured } from "@/lib/clerk";
 import { clerkAppearance } from "@/modules/rpg/clerk/appearance";
 
 export function AwakenForm() {
   const [mode, setMode] = useState<"bind" | "return">("bind");
+
+  if (!isClerkConfigured) {
+    return (
+      <GlassPanel glow="gold" className="w-full max-w-lg p-6 sm:p-8">
+        <p className="font-display text-[11px] tracking-[0.32em] text-cure uppercase">
+          Architect Protocol
+        </p>
+        <h1 className="mt-2 font-display text-3xl tracking-[0.12em] uppercase">
+          Signal offline
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-muted">
+          Clerk keys are missing in this environment, so binding is unavailable. Add
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and redeploy.
+        </p>
+      </GlassPanel>
+    );
+  }
 
   return (
     <GlassPanel glow="gold" className="w-full max-w-lg p-6 sm:p-8">
