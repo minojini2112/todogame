@@ -43,10 +43,13 @@ export function MobileLandscapeShell({
   }, []);
 
   function tryLockLandscape() {
-    const orientation = window.screen?.orientation;
-    if (orientation && "lock" in orientation) {
-      void orientation.lock("landscape").catch(() => undefined);
+    const orientation = window.screen?.orientation as
+      | { lock?: (type: string) => Promise<void> }
+      | undefined;
+    if (typeof orientation?.lock !== "function") {
+      return;
     }
+    void orientation.lock("landscape").catch(() => undefined);
   }
 
   return (
