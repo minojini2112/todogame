@@ -3,10 +3,11 @@ import { cn } from "@/lib/cn";
 
 type BootLoaderProps = {
   progress?: number;
+  label?: string;
   className?: string;
 };
 
-export function BootLoader({ progress, className }: BootLoaderProps) {
+export function BootLoader({ progress, label = "Loading", className }: BootLoaderProps) {
   const determinate = typeof progress === "number";
   const width = determinate ? Math.min(100, Math.max(0, progress)) : 40;
 
@@ -38,7 +39,7 @@ export function BootLoader({ progress, className }: BootLoaderProps) {
         />
       </div>
       <p className="mt-4 font-splash text-[11px] tracking-[0.38em] text-white/70">
-        Loading
+        {label}
       </p>
     </div>
   );

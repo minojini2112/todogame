@@ -30,7 +30,7 @@ export type PrologueScene = {
 export const PROLOGUE_SCENES: PrologueScene[] = [
   {
     id: "blackout",
-    lines: [{ text: "Something went wrong." }],
+    lines: [{ text: "Uff... what happened? Why is it so dark?" }],
     nextLabel: "Open your eyes →",
   },
   {

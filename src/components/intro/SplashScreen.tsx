@@ -9,6 +9,11 @@ import { AwakenButton } from "@/components/intro/AwakenButton";
 import { BootLoader } from "@/components/intro/BootLoader";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { isClerkConfigured } from "@/lib/clerk";
+import {
+  isFirstVisitBrowser,
+  markIntroAssetsReady,
+  preloadPrologueAssets,
+} from "@/lib/prologue/preload";
 
 export function SplashScreen() {
   if (!isClerkConfigured) {
@@ -31,21 +36,61 @@ function SplashScreenView({
 }) {
   const reduced = useReducedMotion();
   const [imageReady, setImageReady] = useState(false);
+  const [assetsReady, setAssetsReady] = useState(false);
+  const [needsPreload, setNeedsPreload] = useState(true);
   const [progress, setProgress] = useState(8);
   const [booting, setBooting] = useState(true);
 
   const journeyHref = isSignedIn ? "/city" : "/intro";
 
   useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    if (isSignedIn || !isFirstVisitBrowser()) {
+      setNeedsPreload(false);
+      setAssetsReady(true);
+      return;
+    }
+
+    setNeedsPreload(true);
+    let cancelled = false;
+
+    void preloadPrologueAssets((loaded, total) => {
+      if (cancelled) {
+        return;
+      }
+      setProgress(8 + (loaded / Math.max(total, 1)) * 92);
+    }).finally(() => {
+      if (cancelled) {
+        return;
+      }
+      markIntroAssetsReady();
+      setAssetsReady(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoaded, isSignedIn]);
+
+  useEffect(() => {
+    if (!isLoaded || !assetsReady) {
+      return;
+    }
+
     const started = performance.now();
-    const minimum = reduced ? 250 : 1600;
+    const minimum = needsPreload ? (reduced ? 120 : 400) : reduced ? 250 : 1600;
     let frame = 0;
 
     const tick = (now: number) => {
       const elapsed = now - started;
       const timed = Math.min(1, elapsed / minimum);
       const next = imageReady ? timed : Math.min(timed, 0.86);
-      setProgress(8 + next * 92);
+      setProgress((current) =>
+        needsPreload ? Math.max(current, 8 + next * 92) : 8 + next * 92,
+      );
 
       if (imageReady && timed >= 1) {
         setProgress(100);
@@ -58,7 +103,7 @@ function SplashScreenView({
 
     frame = window.requestAnimationFrame(tick);
     return () => window.cancelAnimationFrame(frame);
-  }, [imageReady, reduced]);
+  }, [assetsReady, imageReady, isLoaded, needsPreload, reduced]);
 
   return (
     <main
@@ -108,7 +153,10 @@ function SplashScreenView({
             exit={reduced ? { opacity: 0 } : { opacity: 0 }}
             transition={{ duration: reduced ? 0.2 : 0.8, ease: "easeOut" }}
           >
-            <BootLoader progress={progress} />
+            <BootLoader
+              progress={progress}
+              label={needsPreload ? "Preparing Aurelia" : "Loading"}
+            />
           </motion.div>
         ) : null}
       </AnimatePresence>

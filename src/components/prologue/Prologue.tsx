@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BootLoader } from "@/components/intro/BootLoader";
 import { AerinDialogue } from "@/components/prologue/AerinDialogue";
 import { Dialogue } from "@/components/prologue/Dialogue";
 import { ArrivalScene } from "@/components/prologue/scenes/ArrivalScene";
@@ -23,9 +24,57 @@ import {
   startPrologueMusic,
   stopPrologueMusic,
 } from "@/lib/prologue/audio";
+import {
+  isFirstVisitBrowser,
+  markIntroAssetsReady,
+  preloadPrologueAssets,
+} from "@/lib/prologue/preload";
 import { PROLOGUE_SCENES } from "@/lib/prologue/script";
 
 export default function Prologue() {
+  const [assetsReady, setAssetsReady] = useState(false);
+  const [progress, setProgress] = useState(8);
+
+  useLayoutEffect(() => {
+    if (!isFirstVisitBrowser()) {
+      setAssetsReady(true);
+      return;
+    }
+
+    let cancelled = false;
+
+    void preloadPrologueAssets((loaded, total) => {
+      if (!cancelled) {
+        setProgress(8 + (loaded / Math.max(total, 1)) * 92);
+      }
+    }).finally(() => {
+      if (cancelled) {
+        return;
+      }
+      markIntroAssetsReady();
+      setProgress(100);
+      setAssetsReady(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!assetsReady) {
+    return (
+      <main className="relative h-dvh w-full overflow-hidden bg-[#07111F]">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <BootLoader progress={progress} />
+        </div>
+      </main>
+    );
+  }
+
+  return <ProloguePlayback />;
+}
+
+function ProloguePlayback() {
   const router = useRouter();
   const reduced = useReducedMotion();
   const [sceneIndex, setSceneIndex] = useState(0);
